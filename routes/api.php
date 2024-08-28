@@ -18,20 +18,34 @@ use App\Http\Controllers\EmployeeController;
 
 
 
-Route::post('register',[UserController::class,'register']);
-Route::post('login', [LoginController::class,'login']);
+Route::post('/register',[UserController::class,'register']);
+Route::post('/login', [LoginController::class,'login']);
 
-Route::prefix('services')->group(function(){
-    Route::post('/', [ServiceController::class, 'store']);
-    Route::get('/', [ServiceController::class, 'show']);
-    Route::get('/{id}' , [ServiceController::class , 'showOne']);
-    Route::post('/{id}' , [ServiceController::class , 'update']);
-    Route::delete('/{id}' , [ServiceController::class , 'delete']);
+Route::controller(UserController::class)->group(function(){
+    Route::Post('/user/editUserProfile/{id}','editUserProfile');
+    Route::get('/allUser','allUser');
+    Route::get('/logout',"logout");
 });
 
-Route::prefix('employees')->group(function(){
-    Route::post('/' , [EmployeeController::class , 'store']);
-    Route::get('/{id}' , [EmployeeController::class , 'showOne']);
+Route::prefix('services')->group(function(){
+    Route::post('/create', [ServiceController::class, 'store']);
+    Route::get('/', [ServiceController::class, 'index']);
+    Route::get('/show/{id}' , [ServiceController::class , 'show']);
+    Route::post('/edit/{id}' , [ServiceController::class , 'update']);
+    Route::delete('/delete/{id}' , [ServiceController::class , 'delete']);
+});
+
+Route::controller(EmployeeController::class)->prefix('employee')->group(function(){
+    Route::post('/employeeCompleteData','employeeCompleteData');
+    Route::Post("/updateEmployeeCompleteData/{id}",'updateEmployeeCompleteData');
+    Route::Post("/updateWorksImage/{id}",'updateWorksImage');
+    Route::get('/showAllEmployeesByServiceId/{service_id}','showAllEmployeesByServiceId');
+    Route::get("/employeeProfile/{id}",'employeeProfile');
+    Route::get("/getTotalOrders/{id}/orders/total",'getTotalOrders');
+    Route::Post("/editEmployeeProfile/{id}",'editEmployeeProfile');
+    Route::get("/showEmployeeLastWorks/{id}",'showEmployeeLastWorks');
+    Route::post('/changeEmployeeStatus/{id}', 'changeEmployeeStatus');
+    Route::post('/changeCheckByAdmin/{id}', 'changeCheckByAdmin');
 });
 
 

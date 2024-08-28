@@ -9,9 +9,46 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
+
 class LoginController extends Controller
 {
     use ApiResponseTrait;
+
+    /**
+     * @OA\Post(
+     * path="/api/login",
+     * summary="Authenticate user and generate token",
+     * tags={"userAuth"},
+     * @OA\Parameter(
+     *     name="email_or_phone",
+     *     in="query",
+     *     description="User's email or phone to login",
+     *     required=true,
+     *     @OA\Schema(
+     *         type="string",
+     *         example="ahmed@gmail.com"
+     *     )
+     * ),
+     * @OA\Parameter(
+     *     name="password",
+     *     in="query",
+     *     description="User's password",
+     *     required=true,
+     *     @OA\Schema(
+     *         type="string",
+     *         example="Am123456"
+     *     )
+     * ),
+     * @OA\Response(
+     *     response="200",
+     *     description="Login successful"
+     * ),
+     * @OA\Response(
+     *     response="401",
+     *     description="Invalid credentials"
+     * )
+     * )
+     */
 
     public function login(LoginRequest $request)
     {

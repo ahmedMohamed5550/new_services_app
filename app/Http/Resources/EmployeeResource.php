@@ -12,10 +12,10 @@ class EmployeeResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    public function toArray(Request $request): array
+    public function toArray($request)
     {
         return [
-            'id'=>$this->id,
+            'id' => $this->id,
             'desc' => $this->desc,
             'location' => $this->location,
             'imageSSN' => $this->imageSSN,
@@ -24,8 +24,7 @@ class EmployeeResource extends JsonResource
             'min_price' => $this->min_price,
             'user_id' => $this->user_id,
             'service_id' => $this->service_id,
-            'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at' => $this->updated_at->toDateTimeString(),
+            'works' => $this->whenLoaded('works')
         ];
     }
 }

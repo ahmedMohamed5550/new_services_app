@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
+            $table->timestamps();
             $table->text("desc");
             $table->text("location");
             $table->string('imageSSN');
@@ -23,7 +24,6 @@ return new class extends Migration
             $table->enum('checkByAdmin',['accepted','waiting','rejected'])->default('waiting');
             $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('service_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->timestamps();
         });
     }
 
