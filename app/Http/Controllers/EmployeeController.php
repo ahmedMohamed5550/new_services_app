@@ -1048,17 +1048,11 @@ class EmployeeController extends Controller
             foreach($employeeWork as $employeeWorks){
                 $employeeWorks;
             }
-            return response()->json([
-                'status' => 'true',
-                'Employee Work Image' => $employeeWork,
-            ],200);
+        return $this->apiResponse('show employee last works successfully',200,$employeeWork);
         }
 
         else{
-            return response()->json([
-                'status' => false,
-                'message' => 'no user found',
-            ],401);
+            return $this->apiResponse('Not found employee last works',404);
         }
 
     }
@@ -1105,37 +1099,30 @@ class EmployeeController extends Controller
 
      public function showAllEmployeesByServiceId($service_id)
      {
-         $allEmployees = Employee::where('service_id', $service_id)
-         ->where('checkByAdmin','accepted')
-         ->get();
+         $allEmployees = Employee::where('service_id', $service_id)->get();
 
          if ($allEmployees->count() != 0) {
              $employeesWithRatings = $allEmployees->map(function ($employee) {
-                 $employee->user->works;
-                 $employee->service;
-                 $averageRating = $this->feedbackService->getAverageRatingPerEmployee($employee->id);
-                 $totalRates = $employee->feedbacks->count();
+                $employee->user;
+                $employee->works;
+                $employee->service;
+                //  $averageRating = $this->feedbackService->getAverageRatingPerEmployee($employee->id);
+                //  $totalRates = $employee->feedbacks->count();
 
-                 // Add average rating and total rates to the employee
-                 $employee->average_rating = $averageRating['average_rating'];
-                 $employee->total_rates = $totalRates;
+                //  // Add average rating and total rates to the employee
+                //  $employee->average_rating = $averageRating['average_rating'];
+                //  $employee->total_rates = $totalRates;
 
-                 // Remove the feedbacks relation to avoid including it in the response
-                 unset($employee->feedbacks);
+                //  // Remove the feedbacks relation to avoid including it in the response
+                //  unset($employee->feedbacks);
 
                  return $employee;
              });
 
-             return response()->json([
-                 'status' => true,
-                 'allemployee' => $employeesWithRatings,
-             ], 200);
+            return $this->apiResponse('show all employee successfully',200,$employeesWithRatings);
          }
 
-         return response()->json([
-             'status' => false,
-             'message' => 'No employees found for this service.',
-         ], 404);
+        return $this->apiResponse('No employees found for this service',404);
      }
 
 
