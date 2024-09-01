@@ -2,23 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Service;
+use App\Models\Section;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
-use App\Http\Requests\ServiceRequest;
-use App\Http\Resources\ServiceResource;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\SectionRequest;
+use App\Http\Resources\SectionResource;
 
-class ServiceController extends Controller
+class SectionController extends Controller
 {
     use ApiResponseTrait;
 
 
     /**
      * @OA\Get(
-     *     path="/api/services",
+     *     path="/api/sections",
      *     summary="Show all services",
-     *     tags={"services"},
+     *     tags={"sections"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
@@ -26,7 +25,7 @@ class ServiceController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="services", type="array", @OA\Items(type="object"))
+     *             @OA\Property(property="sections", type="array", @OA\Items(type="object"))
      *         )
      *     ),
      *     @OA\Response(
@@ -44,26 +43,26 @@ class ServiceController extends Controller
     //all services
     public function index()
     {
-        $services = Service::get();
-        if(count($services) > 0)
+        $sections = Section::get();
+        if(count($sections) > 0)
         {
-            return $this->apiResponse('All services' , 200 , ServiceResource::collection($services));
+            return $this->apiResponse('All sections' , 200 , SectionResource::collection($sections));
         }
-        return $this->apiResponse('no services' , 200 , $services);
+        return $this->apiResponse('no sections' , 200 , $sections);
     }
 
 
-    /**
+     /**
      * @OA\Get(
-     *     path="/api/services/show/{service_id}",
-     *     summary="Get service by id",
-     *     tags={"services"},
+     *     path="/api/sections/show/{section_id}",
+     *     summary="Get section by id",
+     *     tags={"sections"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
-     *         name="service_id",
+     *         name="section_id",
      *         in="path",
      *         required=true,
-     *         description="service id",
+     *         description="section id",
      *         @OA\Schema(
      *             type="integer",
      *         ),
@@ -79,21 +78,22 @@ class ServiceController extends Controller
     //one service
     public function show($id)
     {
-        $service = Service::find($id);
+        $section = Section::find($id);
 
-        if($service)
+        if($section)
         {
-            return $this->apiResponse("show Service done" , 200 , new ServiceResource($service));
+            return $this->apiResponse("show section done" , 200 , new SectionResource($section));
         }
         return $this->apiResponse('not found' , 404);
     }
 
 
+
     /**
      * @OA\Post(
-     *     path="/api/services/create",
-     *     summary="create a new service",
-     *     tags={"services"},
+     *     path="/api/sections/create",
+     *     summary="create a new section",
+     *     tags={"sections"},
      *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
@@ -108,19 +108,13 @@ class ServiceController extends Controller
      *                 @OA\Property(
      *                     property="desc",
      *                     type="string",
-     *                     description="service description"
-     *                 ),
-     *                 @OA\Property(
-     *           
-     *                     property="section_id",
-     *                     type="integer",
-     *                     description="section id"
+     *                     description="section description"
      *                 ),
      *                 @OA\Property(
      *                     property="image",
      *                     type="string",
      *                     format="binary",
-     *                     description="service image"
+     *                     description="section image"
      *                 ),
     *     @OA\Property(
     *         property="comment",
@@ -132,7 +126,7 @@ class ServiceController extends Controller
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="add new service successfully"
+     *         description="add new section successfully"
      *     ),
      *     @OA\Response(
      *         response="422",
@@ -141,8 +135,8 @@ class ServiceController extends Controller
      * )
      */
 
-    //create new service
-    public function store(ServiceRequest $request)
+
+    public function store(SectionRequest $request)
     {
         $validatedData = $request->validated();
 
@@ -150,26 +144,27 @@ class ServiceController extends Controller
 
         if($request->hasFile('image'))
         {
-            $image_path = $request->file('image')->store('services_image' , 'uploads');
+            $image_path = $request->file('image')->store('sections_image' , 'uploads');
         }
 
         $validatedData['image'] = $image_path;
 
-        $service = Service::create($validatedData);
-        return $this->apiResponse('service created successfully' , 200 , new ServiceResource($service));
+        $section = Section::create($validatedData);
+        return $this->apiResponse('section created successfully' , 200 , new SectionResource($section));
     }
 
-    /**
+
+     /**
      * @OA\Post(
-     *     path="/api/services/edit/{service_id}",
-     *     summary="edit to services",
-     *     tags={"services"},
+     *     path="/api/sections/edit/{section_id}",
+     *     summary="edit to sections",
+     *     tags={"sections"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
-     *         name="service_id",
+     *         name="section_id",
      *         in="path",
      *         required=true,
-     *         description="ID of the service",
+     *         description="ID of the section",
      *         @OA\Schema(
      *             type="integer"
      *         )
@@ -182,17 +177,12 @@ class ServiceController extends Controller
      *                 @OA\Property(
      *                     property="name",
      *                     type="string",
-     *                     description="service name"
+     *                     description="section name"
      *                 ),
     *                 @OA\Property(
      *                     property="desc",
      *                     type="string",
-     *                     description="service description"
-     *                 ),
-    *                 @OA\Property(
-     *                     property="section_id",
-     *                     type="integer",
-     *                     description="section id"
+     *                     description="section description"
      *                 ),
      *                 @OA\Property(
      *                     property="image",
@@ -205,7 +195,7 @@ class ServiceController extends Controller
      *     ),
      *     @OA\Response(
      *         response="201",
-     *         description="update service successfully"
+     *         description="update section successfully"
      *     ),
      *     @OA\Response(
      *         response="422",
@@ -215,16 +205,16 @@ class ServiceController extends Controller
      */
 
     //update service
-    public function update(ServiceRequest $request , $id)
+    public function update(SectionRequest $request , $id)
     {
-        $service = Service::find($id);
+        $section = Section::find($id);
 
-        if(!$service)
+        if(!$section)
         {
             return $this->failed('not found' , 404);
         }
 
-        $old_image = $service->image;
+        $old_image = $section->image;
 
         $validatedData = $request->validated();
 
@@ -232,21 +222,21 @@ class ServiceController extends Controller
 
         if($request->hasFile('image'))
         {
-            $new_image = $request->file('image')->store('services_image' , 'uploads');
+            $new_image = $request->file('image')->store('sections_image' , 'uploads');
         }
         if($new_image != null)
         {
             $validatedData['image'] = $new_image;
         }
 
-        $service->update($validatedData);
+        $section->update($validatedData);
 
         if($new_image != null && isset($old_image))
         {
             Storage::disk('uploads')->delete($old_image);
         }
 
-        return $this->apiResponse('service updated Successfully' , 200 , new ServiceResource($service));
+        return $this->apiResponse('section updated Successfully' , 200 , new SectionResource($section));
 
     }
 
@@ -254,13 +244,13 @@ class ServiceController extends Controller
 
     /**
     * @OA\Delete(
-    *     path="/api/services/delete/{service_id}",
-    *     summary="Delete an service",
-    *     description="Delete service by ID",
-    *     tags={"services"},
+    *     path="/api/sections/delete/{section_id}",
+    *     summary="Delete an sections",
+    *     description="Delete section by ID",
+    *     tags={"sections"},
     *     security={{"bearerAuth":{}}},
     *     @OA\Parameter(
-    *         name="service_id",
+    *         name="section_id",
     *         in="path",
     *         description="ID of the service to delete",
     *         required=true,
@@ -270,37 +260,39 @@ class ServiceController extends Controller
     *     ),
     *     @OA\Response(
     *         response=200,
-    *         description="service deleted successfully"
+    *         description="section deleted successfully"
     *     ),
     *     @OA\Response(
     *         response=404,
-    *         description="service not found"
+    *         description="section not found"
     *     )
     * )
     */
 
-    //delete service
+
     public function delete($id)
     {
-        $service = Service::find($id);
+        $section = Section::find($id);
 
-        if(!$service)
+        if(!$section)
         {
             return $this->failed('not found' , 404);
         }
 
-        $image = $service->image;
+        $image = $section->image;
 
-        $service->delete();
+        $section->delete();
 
         if($image != null)
         {
             Storage::disk('uploads')->delete($image);
         }
 
-        return $this->apiResponse('service deleted successfully' , 200 , $service);
+        return $this->apiResponse('section deleted successfully' , 200 , $section);
 
 
     }
+
+
 
 }

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\SectionController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\EmployeeController;
 
@@ -33,6 +34,15 @@ Route::prefix('services')->group(function(){
     Route::get('/show/{id}' , [ServiceController::class , 'show']);
     Route::post('/edit/{id}' , [ServiceController::class , 'update']);
     Route::delete('/delete/{id}' , [ServiceController::class , 'delete']);
+});
+
+
+Route::prefix('sections')->group(function(){
+    Route::post('/create', [SectionController::class, 'store']);
+    Route::get('/', [SectionController::class, 'index']);
+    Route::get('/show/{id}' , [SectionController::class , 'show']);
+    Route::post('/edit/{id}' , [SectionController::class , 'update']);
+    Route::delete('/delete/{id}' , [SectionController::class , 'delete']);
 });
 
 Route::controller(EmployeeController::class)->prefix('employee')->group(function(){

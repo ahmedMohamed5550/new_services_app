@@ -1022,6 +1022,237 @@
                 }
             }
         },
+        "/api/sections": {
+            "get": {
+                "tags": [
+                    "sections"
+                ],
+                "summary": "Show all services",
+                "operationId": "ec6bc0921c4783e5344d7c888da6f7e8",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "sections": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/sections/show/{section_id}": {
+            "get": {
+                "tags": [
+                    "sections"
+                ],
+                "summary": "Get section by id",
+                "operationId": "c453b257733d2d551d518ca76f6d4ce6",
+                "parameters": [
+                    {
+                        "name": "section_id",
+                        "in": "path",
+                        "description": "section id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/sections/create": {
+            "post": {
+                "tags": [
+                    "sections"
+                ],
+                "summary": "create a new section",
+                "operationId": "1a1c2b283d3b71d8b2cf4db1e7c1730f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "name of service",
+                                        "type": "string"
+                                    },
+                                    "desc": {
+                                        "description": "section description",
+                                        "type": "string"
+                                    },
+                                    "image": {
+                                        "description": "section image",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "comment": {
+                                        "description": "to access image use https://mahllola.online/public/image  example : https://mahllola.online/public/storage/services_folder/ttyVNuauz67kqXX40jyewMwh3DWpdFjjyJ0pIiPd.jpg",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "add new section successfully"
+                    },
+                    "422": {
+                        "description": "Validation errors"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/sections/edit/{section_id}": {
+            "post": {
+                "tags": [
+                    "sections"
+                ],
+                "summary": "edit to sections",
+                "operationId": "47acddab2a16721fe49a2e44ca9a142d",
+                "parameters": [
+                    {
+                        "name": "section_id",
+                        "in": "path",
+                        "description": "ID of the section",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "section name",
+                                        "type": "string"
+                                    },
+                                    "desc": {
+                                        "description": "section description",
+                                        "type": "string"
+                                    },
+                                    "image": {
+                                        "description": "Image file",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "update section successfully"
+                    },
+                    "422": {
+                        "description": "Validation errors"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/sections/delete/{section_id}": {
+            "delete": {
+                "tags": [
+                    "sections"
+                ],
+                "summary": "Delete an sections",
+                "description": "Delete section by ID",
+                "operationId": "e9e268ca28726b16a8f449d6ce7e6b51",
+                "parameters": [
+                    {
+                        "name": "section_id",
+                        "in": "path",
+                        "description": "ID of the service to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "section deleted successfully"
+                    },
+                    "404": {
+                        "description": "section not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/services": {
             "get": {
                 "tags": [
@@ -1131,6 +1362,10 @@
                                         "description": "service description",
                                         "type": "string"
                                     },
+                                    "section_id": {
+                                        "description": "section id",
+                                        "type": "integer"
+                                    },
                                     "image": {
                                         "description": "service image",
                                         "type": "string",
@@ -1192,6 +1427,10 @@
                                     "desc": {
                                         "description": "service description",
                                         "type": "string"
+                                    },
+                                    "section_id": {
+                                        "description": "section id",
+                                        "type": "integer"
                                     },
                                     "image": {
                                         "description": "Image file",
@@ -1542,6 +1781,10 @@
         {
             "name": "userAuth",
             "description": "userAuth"
+        },
+        {
+            "name": "sections",
+            "description": "sections"
         },
         {
             "name": "services",

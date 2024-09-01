@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ServiceRequest extends FormRequest
+class SectionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,7 @@ class ServiceRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'desc' => 'required|string',
-            'image' => 'file|mimes:jpeg,png,jpg,gif|max:2048',
-            'section_id'=>'required|exists:sections,id',
+            'image' => 'file|mimes:jpeg,png,jpg,gif|max:2048'
         ];
     }
 }
