@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('name',50);
-            $table->text('desc');
+            $table->text('desc')->nullable();
             $table->foreignId('section_id')->references('id')->on('sections')->onDelete('cascade');
             $table->string('image')->nullable();
         });

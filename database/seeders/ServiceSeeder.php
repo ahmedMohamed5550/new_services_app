@@ -11,18 +11,30 @@ class ServiceSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run()
     {
-        Service::create([
-            'name' => 'Cleaning',
-            'desc' => 'Professional cleaning services for homes and offices.',
-            'image' => null
-        ]);
+        Service::updateOrCreate(
+            ['name' => 'Service A'],
+            [
+                'desc' => 'Description for Service A',
+                'section_id' => 1,
+            ]
+        );
 
-        Service::create([
-            'name' => 'Plumbing',
-            'desc' => 'Expert plumbing services for repairs and installations.',
-            'image' => null
-        ]);
+        Service::updateOrCreate(
+            ['name' => 'Service B'],
+            [
+                'desc' => 'Description for Service B',
+                'section_id' => 2,
+            ]
+        );
+
+        Service::updateOrCreate(
+            ['name' => 'Service C'],
+            [
+                'desc' => 'Description for Service C',
+                'section_id' => 3,
+            ]
+        );
     }
 }

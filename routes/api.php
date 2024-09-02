@@ -7,7 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\EmployeeController;
-
+use App\Http\Controllers\LocationController;
 
 // Route::post('refresh', [AuthController::class,'refresh']);
 // Route::post('logout', [AuthController::class,'logout']);
@@ -26,6 +26,15 @@ Route::controller(UserController::class)->group(function(){
     Route::Post('/user/editUserProfile/{id}','editUserProfile');
     Route::get('/allUser','allUser');
     Route::get('/logout',"logout");
+});
+
+Route::group(['prefix'=>'location'],function($router){
+    Route::controller(LocationController::class)->group(function(){
+        Route::delete('destroy/{id}', 'destroy');
+        Route::post('store', 'store');
+        Route::post('update/{id}', 'update');
+        Route::get('showUsersLocation/{id}', 'showUsersLocation');
+    });
 });
 
 Route::prefix('services')->group(function(){

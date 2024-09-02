@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('feedbacks', function (Blueprint $table) {
+        Schema::create('locations', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->text('comment')->nullable();
-            $table->enum('rating',[1,2,3,4,5]);
+            $table->string('city')->nullable();
+            $table->string('bitTitle')->nullable();
+            $table->string('street')->nullable();
+            $table->string('specialMarque')->nullable();
+            $table->double('lat')->nullable();
+            $table->double('long')->nullable();
             $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('employee_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            // $table->foreignId('order_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('feedbacks');
+        Schema::dropIfExists('locations');
     }
 };

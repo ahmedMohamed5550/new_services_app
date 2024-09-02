@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
 use App\Http\Requests\SectionRequest;
 use App\Http\Resources\SectionResource;
+use Illuminate\Support\Facades\Storage;
 
 class SectionController extends Controller
 {
