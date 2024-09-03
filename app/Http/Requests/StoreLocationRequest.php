@@ -27,7 +27,7 @@ class StoreLocationRequest extends FormRequest
             'city' => 'nullable|string|max:255',
             'bitTitle' => 'nullable|string|max:255',
             'street' => 'nullable|string|max:255',
-            'specialMarque' => 'required|string|max:255',
+            'specialMarque' => 'nullable|string|max:255',
             'lat' => 'nullable|numeric',
             'long' => 'nullable|numeric',
             'user_id' => 'required|exists:users,id',

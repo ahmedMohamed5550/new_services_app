@@ -11,26 +11,35 @@ class Employee extends Model
     use HasFactory,Notifiable;
 
     protected $fillable=[
-        'desc',
-        'location',
-        'imageSSN',
-        'livePhoto',
-        'nationalId',
-        'min_price',
-        'status',
+        'description',
+        'phone_number_1',
+        'phone_number_2',
+        'mobile_number_1',
+        'mobile_number_2',
+        'fax_number',
+        'whatsapp_number',
+        'facebook_link',
+        'website',
         'checkByAdmin',
-        'user_id',
+        'status',
         'service_id',
+        'user_id',
+        'section_id'
     ];
-
+    
     public function service()
     {
         return $this->belongsTo(Service::class);
     }
-
+    
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function section()
+    {
+        return $this->belongsTo(Section::class);
     }
 
     public function works()

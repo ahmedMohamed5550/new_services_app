@@ -18,30 +18,64 @@
                         "multipart/form-data": {
                             "schema": {
                                 "properties": {
-                                    "desc": {
+                                    "description": {
                                         "description": "Description of the employee",
                                         "type": "string"
                                     },
-                                    "location": {
-                                        "description": "location of the employee",
+                                    "phone_number_1": {
+                                        "description": "phone_number_1",
                                         "type": "string"
                                     },
-                                    "imageSSN": {
-                                        "description": "صورة الباطاقة",
-                                        "type": "string",
-                                        "format": "binary"
-                                    },
-                                    "livePhoto": {
-                                        "description": "صورة لايف",
-                                        "type": "string",
-                                        "format": "binary"
-                                    },
-                                    "nationalId": {
-                                        "description": " الرقم القومي",
+                                    "phone_number_2": {
+                                        "description": "phone_number_2",
                                         "type": "string"
                                     },
-                                    "min_price": {
-                                        "description": "Minimum price",
+                                    "mobile_number_1": {
+                                        "description": "mobile_number_1",
+                                        "type": "string"
+                                    },
+                                    "mobile_number_2": {
+                                        "description": "mobile_number_2",
+                                        "type": "string"
+                                    },
+                                    "fax_number": {
+                                        "description": "fax_number",
+                                        "type": "string"
+                                    },
+                                    "whatsapp_number": {
+                                        "description": "whatsapp_number",
+                                        "type": "string"
+                                    },
+                                    "facebook_link": {
+                                        "description": "facebook_link",
+                                        "type": "string"
+                                    },
+                                    "website": {
+                                        "description": "website",
+                                        "type": "string"
+                                    },
+                                    "city": {
+                                        "description": "city",
+                                        "type": "string"
+                                    },
+                                    "bitTitle": {
+                                        "description": "bitTitle",
+                                        "type": "string"
+                                    },
+                                    "street": {
+                                        "description": "street",
+                                        "type": "string"
+                                    },
+                                    "specialMarque": {
+                                        "description": "specialMarque",
+                                        "type": "string"
+                                    },
+                                    "lat": {
+                                        "description": "lat",
+                                        "type": "integer"
+                                    },
+                                    "long": {
+                                        "description": "long",
                                         "type": "integer"
                                     },
                                     "user_id": {
@@ -50,6 +84,10 @@
                                     },
                                     "service_id": {
                                         "description": "Service ID",
+                                        "type": "integer"
+                                    },
+                                    "section_id": {
+                                        "description": "Section ID",
                                         "type": "integer"
                                     },
                                     "works[0][image]": {

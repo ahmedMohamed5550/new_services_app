@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\EmployeeCompletedDataRequest;
+use Throwable;
 use App\Models\Employee;
+use App\Models\Location;
+use App\Models\EmployeeWork;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
-use App\Http\Requests\EmployeeRequest;
-use App\Http\Requests\UpdateEmployeeProfileRequest;
-use App\Http\Resources\EmployeeProfileResource;
-use App\Http\Resources\EmployeeResource;
-use App\Models\EmployeeWork;
 use App\Services\FeedbackService;
+use App\Http\Requests\EmployeeRequest;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\EmployeeResource;
+use App\Http\Resources\LocationResource;
 use Illuminate\Support\Facades\Validator;
-use Throwable;
+use App\Http\Resources\EmployeeProfileResource;
+use App\Http\Requests\EmployeeCompletedDataRequest;
+use App\Http\Requests\UpdateEmployeeProfileRequest;
 
 class EmployeeController extends Controller
 {
@@ -39,36 +41,82 @@ class EmployeeController extends Controller
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
      *                 @OA\Property(
-     *                     property="desc",
+     *                     property="description",
      *                     type="string",
      *                     description="Description of the employee"
      *                 ),
      *                 @OA\Property(
-     *                     property="location",
+     *                     property="phone_number_1",
      *                     type="string",
-     *                     description="location of the employee"
+     *                     description="phone_number_1"
      *                 ),
      *                 @OA\Property(
-     *                     property="imageSSN",
+     *                     property="phone_number_2",
      *                     type="string",
-     *                     format="binary",
-     *                     description="صورة الباطاقة"
+     *        
+     *                     description="phone_number_2"
      *                 ),
      *                 @OA\Property(
-     *                     property="livePhoto",
+     *                     property="mobile_number_1",
      *                     type="string",
-     *                     format="binary",
-     *                     description="صورة لايف"
+     *                     
+     *                     description="mobile_number_1"
      *                 ),
      *                 @OA\Property(
-     *                     property="nationalId",
+     *                     property="mobile_number_2",
      *                     type="string",
-     *                     description=" الرقم القومي"
+     *                     
+     *                     description="mobile_number_2"
      *                 ),
      *                 @OA\Property(
-     *                     property="min_price",
+     *                     property="fax_number",
+     *                     type="string",
+     *                     description="fax_number"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="whatsapp_number",
+     *                     type="string",
+     *                     description="whatsapp_number"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="facebook_link",
+     *                     type="string",
+     *                     description="facebook_link"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="website",
+     *                     type="string",
+     *                     description="website"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="city",
+     *                     type="string",
+     *                     description="city"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="bitTitle",
+     *                     type="string",
+     *                     description="bitTitle"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="street",
+     *                     type="string",
+     *                     description="street"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="specialMarque",
+     *                     type="string",
+     *                     description="specialMarque"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="lat",
      *                     type="integer",
-     *                     description="Minimum price"
+     *                     description="lat"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="long",
+     *                     type="integer",
+     *                     description="long"
      *                 ),
      *                 @OA\Property(
      *                     property="user_id",
@@ -79,6 +127,11 @@ class EmployeeController extends Controller
      *                     property="service_id",
      *                     type="integer",
      *                     description="Service ID"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="section_id",
+     *                     type="integer",
+     *                     description="Section ID"
      *                 ),
      *                 @OA\Property(
      *                     property="works[0][image]",
@@ -152,29 +205,10 @@ class EmployeeController extends Controller
     {
         $validatedData = $request->validated();
 
-        $imageSsnUrl = null;
-        $imageLive = null;
+       
+        $employee = Employee::create($validatedData);
 
-        if ($request->hasFile('imageSSN')) {
-            $newImageSsn = $request->file('imageSSN')->store('employees_ssn', 'public');
-            $imageSsnUrl = Storage::url($newImageSsn);
-        }
-
-        if ($request->hasFile('livePhoto')) {
-            $newImageLive = $request->file('livePhoto')->store('employees_live_photo', 'public');
-            $imageLive = Storage::url($newImageLive);
-        }
-
-        $employee = Employee::create([
-            'desc' => $request->desc,
-            'location' => $request->location,
-            'imageSSN' => $imageSsnUrl,
-            'livePhoto' => $imageLive,
-            'nationalId' => $request->nationalId,
-            'min_price' => $request->min_price,
-            'user_id' => $request->user_id,
-            'service_id' => $request->service_id
-        ]);
+        $location = Location::create($validatedData);
 
         if ($request->has('works')) {
             $works = $request->works;
