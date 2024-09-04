@@ -25,10 +25,11 @@ class EmployeeResource extends JsonResource
             'whatsapp_number' => $this->whatsapp_number,
             'facebook_link' => $this->facebook_link,
             'website' => $this->website,
-            'user_id' => $this->user_id,
-            'service_id' => $this->service_id,
-            'section_id' => $this->section_id,
-            'works' => $this->whenLoaded('works')
+            'user' => $this->whenLoaded('user'),
+            'service' => $this->whenLoaded('service'),
+            'section' => $this->whenLoaded('section'),
+            'works' => $this->whenLoaded('works'),
+            'locations' => $this->whenLoaded('user.locations')
         ];
     }
 }

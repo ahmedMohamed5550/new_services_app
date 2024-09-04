@@ -41,6 +41,7 @@ Route::prefix('services')->group(function(){
     Route::post('/create', [ServiceController::class, 'store']);
     Route::get('/', [ServiceController::class, 'index']);
     Route::get('/show/{id}' , [ServiceController::class , 'show']);
+    Route::get('/show/section/{section_id}' , [ServiceController::class , 'showAllServicesBySection']);
     Route::post('/edit/{id}' , [ServiceController::class , 'update']);
     Route::delete('/delete/{id}' , [ServiceController::class , 'delete']);
 });
@@ -58,7 +59,7 @@ Route::controller(EmployeeController::class)->prefix('employee')->group(function
     Route::post('/employeeCompleteData','employeeCompleteData');
     Route::Post("/updateEmployeeCompleteData/{id}",'updateEmployeeCompleteData');
     Route::Post("/updateWorksImage/{id}",'updateWorksImage');
-    Route::get('/showAllEmployeesByServiceId/{service_id}','showAllEmployeesByServiceId');
+    Route::get('/section/{section_id}/service/{service_id}','showAllEmployeesBySectionIdAndServiceId');
     Route::get("/employeeProfile/{id}",'employeeProfile');
     Route::get("/getTotalOrders/{id}/orders/total",'getTotalOrders');
     Route::Post("/editEmployeeProfile/{id}",'editEmployeeProfile');

@@ -88,6 +88,58 @@ class ServiceController extends Controller
         return $this->apiResponse('not found' , 404);
     }
 
+        /**
+     * @OA\Get(
+     *     path="/api/services/show/section/{section_id}",
+     *     summary="Get all services in section",
+     *     tags={"services"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="section_id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the section",
+     *         @OA\Schema(
+     *             type="integer",
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="allemployee", type="array", @OA\Items(type="object"))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No services found in this section",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="No employee found in this service")
+     *         )
+     *     )
+     * )
+     */
+
+    public function showAllServicesBySection($section_id){
+        $allServices = Service::where('section_id', $section_id)->get();
+
+        if ($allServices->isEmpty()) {
+            return $this->apiResponse('No services found for this section', 404);
+        }
+
+        $allServices->load('section');
+
+        return $this->apiResponse(
+            'Show all services successfully',
+            200,
+            ServiceResource::collection($allServices)
+        );
+    }
+
 
     /**
      * @OA\Post(
@@ -111,7 +163,7 @@ class ServiceController extends Controller
      *                     description="service description"
      *                 ),
      *                 @OA\Property(
-     *           
+     *
      *                     property="section_id",
      *                     type="integer",
      *                     description="section id"

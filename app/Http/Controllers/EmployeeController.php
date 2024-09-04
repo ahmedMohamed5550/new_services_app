@@ -53,19 +53,19 @@ class EmployeeController extends Controller
      *                 @OA\Property(
      *                     property="phone_number_2",
      *                     type="string",
-     *        
+     *
      *                     description="phone_number_2"
      *                 ),
      *                 @OA\Property(
      *                     property="mobile_number_1",
      *                     type="string",
-     *                     
+     *
      *                     description="mobile_number_1"
      *                 ),
      *                 @OA\Property(
      *                     property="mobile_number_2",
      *                     type="string",
-     *                     
+     *
      *                     description="mobile_number_2"
      *                 ),
      *                 @OA\Property(
@@ -205,7 +205,7 @@ class EmployeeController extends Controller
     {
         $validatedData = $request->validated();
 
-       
+
         $employee = Employee::create($validatedData);
 
         $location = Location::create($validatedData);
@@ -235,7 +235,7 @@ class EmployeeController extends Controller
                 ]);
             }
         }
-        $employee = $employee->load('works');
+        $employee = $employee->load('works', 'user','user.locations','section','service');
 
         return $this->apiResponse('Details added to profile successfully',200,new EmployeeResource($employee));
     }
@@ -1097,10 +1097,19 @@ class EmployeeController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/employee/showAllEmployeesByServiceId/{service_id}",
-     *     summary="Get all employees in each service",
+     *     path="/api/employee/section/{section_id}/service/{service_id}",
+     *     summary="Get all employees in section and service",
      *     tags={"Employee"},
      *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="section_id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the section",
+     *         @OA\Schema(
+     *             type="integer",
+     *         ),
+     *     ),
      *     @OA\Parameter(
      *         name="service_id",
      *         in="path",
@@ -1131,33 +1140,25 @@ class EmployeeController extends Controller
      * )
      */
 
-     public function showAllEmployeesByServiceId($service_id)
+     public function showAllEmployeesBySectionIdAndServiceId($section_id, $service_id)
      {
-         $allEmployees = Employee::where('service_id', $service_id)->get();
+         $allEmployees = Employee::where('service_id', $service_id)
+             ->where('section_id', $section_id)
+             ->get();
 
-         if ($allEmployees->count() != 0) {
-             $employeesWithRatings = $allEmployees->map(function ($employee) {
-                $employee->user;
-                $employee->works;
-                $employee->service;
-                //  $averageRating = $this->feedbackService->getAverageRatingPerEmployee($employee->id);
-                //  $totalRates = $employee->feedbacks->count();
-
-                //  // Add average rating and total rates to the employee
-                //  $employee->average_rating = $averageRating['average_rating'];
-                //  $employee->total_rates = $totalRates;
-
-                //  // Remove the feedbacks relation to avoid including it in the response
-                //  unset($employee->feedbacks);
-
-                 return $employee;
-             });
-
-            return $this->apiResponse('show all employee successfully',200,$employeesWithRatings);
+         if ($allEmployees->isEmpty()) {
+             return $this->apiResponse('No employees found for this service', 404);
          }
 
-        return $this->apiResponse('No employees found for this service',404);
+         $allEmployees->load('works', 'user', 'user.locations', 'section', 'service');
+
+         return $this->apiResponse(
+             'Show all employees successfully',
+             200,
+             EmployeeResource::collection($allEmployees)
+         );
      }
+
 
 
 

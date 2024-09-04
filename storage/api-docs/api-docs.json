@@ -952,14 +952,23 @@
                 ]
             }
         },
-        "/api/employee/showAllEmployeesByServiceId/{service_id}": {
+        "/api/employee/section/{section_id}/service/{service_id}": {
             "get": {
                 "tags": [
                     "Employee"
                 ],
-                "summary": "Get all employees in each service",
-                "operationId": "eafe3029efab73457064d2378f35c24d",
+                "summary": "Get all employees in section and service",
+                "operationId": "8cf253a0b16580eabe231c90d4f50577",
                 "parameters": [
+                    {
+                        "name": "section_id",
+                        "in": "path",
+                        "description": "ID of the section",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
                     {
                         "name": "service_id",
                         "in": "path",
@@ -1743,6 +1752,75 @@
                 "responses": {
                     "200": {
                         "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/services/show/section/{section_id}": {
+            "get": {
+                "tags": [
+                    "services"
+                ],
+                "summary": "Get all services in section",
+                "operationId": "d6c7a2d79c5cf3b5b5397fff681c0eaa",
+                "parameters": [
+                    {
+                        "name": "section_id",
+                        "in": "path",
+                        "description": "ID of the section",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "allemployee": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No services found in this section",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No employee found in this service"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [

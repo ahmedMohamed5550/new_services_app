@@ -19,7 +19,7 @@ class ServiceResource extends JsonResource
             'name'=>$this->name,
             'desc'=>$this->desc,
             'image'=>$this->image,
-            'section_id'=>$this->section_id,
+            'section'=>$this->whenLoaded('section'),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];
