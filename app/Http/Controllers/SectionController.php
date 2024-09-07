@@ -44,7 +44,7 @@ class SectionController extends Controller
     //all services
     public function index()
     {
-        $sections = Section::get();
+        $sections = Section::with('services')->get();
         if(count($sections) > 0)
         {
             return $this->apiResponse('All sections' , 200 , SectionResource::collection($sections));
@@ -79,7 +79,7 @@ class SectionController extends Controller
     //one service
     public function show($id)
     {
-        $section = Section::find($id);
+        $section = Section::with('services')->find($id);
 
         if($section)
         {

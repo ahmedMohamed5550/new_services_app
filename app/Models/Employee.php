@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Employee extends Model
 {
@@ -26,12 +26,12 @@ class Employee extends Model
         'user_id',
         'section_id'
     ];
-    
+
     public function service()
     {
         return $this->belongsTo(Service::class);
     }
-    
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -52,6 +52,9 @@ class Employee extends Model
         return $this->hasMany(Feedback::class);
     }
 
-
+    public function images()
+    {
+        return $this->hasMany(ImageCompany::class);
+    }
 
 }

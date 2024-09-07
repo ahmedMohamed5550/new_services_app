@@ -1030,6 +1030,56 @@
                 ]
             }
         },
+        "/api/images/create": {
+            "post": {
+                "tags": [
+                    "images"
+                ],
+                "summary": "Create images",
+                "operationId": "17967e2985442885cad45d1d1d37e8cb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "image_path": {
+                                        "description": "Array of company images",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
+                                    "employee_id": {
+                                        "description": "The ID of the employee",
+                                        "type": "integer"
+                                    },
+                                    "comment": {
+                                        "description": "to access image use https://mahllola.online/public/image  example : https://mahllola.online/public/storage/services_folder/ttyVNuauz67kqXX40jyewMwh3DWpdFjjyJ0pIiPd.jpg",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Images created successfully"
+                    },
+                    "422": {
+                        "description": "Validation errors"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/location/store": {
             "post": {
                 "tags": [
@@ -2266,6 +2316,10 @@
         {
             "name": "Employee",
             "description": "Employee"
+        },
+        {
+            "name": "images",
+            "description": "images"
         },
         {
             "name": "location",

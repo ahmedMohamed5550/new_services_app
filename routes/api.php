@@ -8,6 +8,7 @@ use App\Http\Controllers\SectionController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\ImageCompanyController;
 
 // Route::post('refresh', [AuthController::class,'refresh']);
 // Route::post('logout', [AuthController::class,'logout']);
@@ -53,6 +54,13 @@ Route::prefix('sections')->group(function(){
     Route::get('/show/{id}' , [SectionController::class , 'show']);
     Route::post('/edit/{id}' , [SectionController::class , 'update']);
     Route::delete('/delete/{id}' , [SectionController::class , 'delete']);
+});
+Route::prefix('images')->group(function(){
+    Route::post('/create', [ImageCompanyController::class, 'store']);
+    // Route::get('/', [SectionController::class, 'index']);
+    // Route::get('/show/{id}' , [SectionController::class , 'show']);
+    // Route::post('/edit/{id}' , [SectionController::class , 'update']);
+    // Route::delete('/delete/{id}' , [SectionController::class , 'delete']);
 });
 
 Route::controller(EmployeeController::class)->prefix('employee')->group(function(){
