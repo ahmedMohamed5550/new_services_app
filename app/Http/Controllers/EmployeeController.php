@@ -17,17 +17,12 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\EmployeeProfileResource;
 use App\Http\Requests\EmployeeCompletedDataRequest;
 use App\Http\Requests\UpdateEmployeeProfileRequest;
+use App\Http\Resources\ShowEmployeeByLocationResource;
+use App\Models\User;
 
 class EmployeeController extends Controller
 {
     use ApiResponseTrait;
-
-    protected $feedbackService;
-
-    public function __construct(FeedbackService $feedbackService)
-    {
-        $this->feedbackService = $feedbackService;
-    }
 
     /**
      * @OA\Post(
@@ -41,31 +36,45 @@ class EmployeeController extends Controller
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
      *                 @OA\Property(
+     *                     property="type",
+     *                     type="string",
+     *                     description="choose between ['company','individual']"
+     *                 ),
+     *                 @OA\Property(
      *                     property="description",
      *                     type="string",
      *                     description="Description of the employee"
      *                 ),
      *                 @OA\Property(
-     *                     property="phone_number_1",
+     *                     property="imageSSN",
      *                     type="string",
-     *                     description="phone_number_1"
+     *                     format="binary",
+     *                     description="صورة الباطاقة"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="livePhoto",
+     *                     type="string",
+     *                     format="binary",
+     *                     description="صورة لايف"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="nationalId",
+     *                     type="string",
+     *                     description=" الرقم القومي"
      *                 ),
      *                 @OA\Property(
      *                     property="phone_number_2",
      *                     type="string",
-     *
      *                     description="phone_number_2"
      *                 ),
      *                 @OA\Property(
      *                     property="mobile_number_1",
      *                     type="string",
-     *
      *                     description="mobile_number_1"
      *                 ),
      *                 @OA\Property(
      *                     property="mobile_number_2",
      *                     type="string",
-     *
      *                     description="mobile_number_2"
      *                 ),
      *                 @OA\Property(
@@ -133,34 +142,6 @@ class EmployeeController extends Controller
      *                     type="integer",
      *                     description="Section ID"
      *                 ),
-     *                 @OA\Property(
-     *                     property="works[0][image]",
-     *                     type="string",
-     *                     format="binary",
-     *                     description="Image work 1",
-     *                      nullable=true,
-     *                 ),
-     *                 @OA\Property(
-     *                     property="works[1][image]",
-     *                     type="string",
-     *                     format="binary",
-     *                     description="Image work 2",
-     *                      nullable=true,
-     *                 ),
-     *                 @OA\Property(
-     *                     property="works[2][image]",
-     *                     type="string",
-     *                     format="binary",
-     *                     description="Image work 3",
-     *                      nullable=true,
-     *                 ),
-     *                 @OA\Property(
-     *                     property="works[3][image]",
-     *                     type="string",
-     *                     format="binary",
-     *                     description="Image work 4",
-     *                      nullable=true,
-     *                 ),
      *             )
      *         )
      *     ),
@@ -203,41 +184,38 @@ class EmployeeController extends Controller
      */
     public function employeeCompleteData(EmployeeCompletedDataRequest $request)
     {
-        $validatedData = $request->validated();
+        try{
+            $validatedData = $request->validated();
 
-
-        $employee = Employee::create($validatedData);
-
-        $location = Location::create($validatedData);
-
-        if ($request->has('works')) {
-            $works = $request->works;
-            $works = array_pad($works, 4, ['image' => null]);
-
-            foreach ($works as $work) {
-                $workImageUrl = null;
-
-                if (isset($work['image']) && $work['image']) {
-                    $workImagePath = $work['image']->store('employee_works', 'public');
-                    $workImageUrl = Storage::url($workImagePath);
-                }
-
-                EmployeeWork::create([
-                    'user_id' => $request->user_id,
-                    'image_url' => $workImageUrl,
-                ]);
+            // Check if the request has an imageSSN file
+            if ($request->hasFile('imageSSN')) {
+                $newImageSsn = $request->file('imageSSN')->store('employees_ssn', 'public');
+                $imageSsnUrl = Storage::url($newImageSsn);
+                // Add the imageSSN URL to the validated data
+                $validatedData['imageSSN'] = $imageSsnUrl;
             }
-        } else {
-            for ($i = 0; $i < 4; $i++) {
-                EmployeeWork::create([
-                    'user_id' => $request->user_id,
-                    'image_url' => null,
-                ]);
+
+            // Check if the request has a livePhoto file
+            if ($request->hasFile('livePhoto')) {
+                $newImageLive = $request->file('livePhoto')->store('employees_live_photo', 'public');
+                $imageLiveUrl = Storage::url($newImageLive);
+                // Add the live photo URL to the validated data
+                $validatedData['livePhoto'] = $imageLiveUrl;
             }
+
+
+            $employee = Employee::create($validatedData);
+            $location = Location::create($validatedData);
+
+            $employee = $employee->load('user','user.locations','section','service');
+
+            return $this->apiResponse('Details added to profile successfully',200,new EmployeeResource($employee));
         }
-        $employee = $employee->load('works', 'user','user.locations','section','service');
 
-        return $this->apiResponse('Details added to profile successfully',200,new EmployeeResource($employee));
+        catch (Throwable $e) {
+            return $this->apiResponse('something error', 500, $e->getMessage());
+        }
+
     }
 
 
@@ -491,184 +469,20 @@ class EmployeeController extends Controller
      }
 
 
-    /**
-     * @OA\Post(
-     *     path="/api/employee/updateWorksImage/{user_id}",
-     *     summary="Edit an employee works image",
-     *     tags={"Employee"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="user_id",
-     *         in="path",
-     *         required=true,
-     *         description="ID of the user",
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *             @OA\Schema(
-     *                 @OA\Property(
-     *                     property="works[0][image]",
-     *                     type="string",
-     *                     format="binary",
-     *                     description="Image work 1",
-     *                     nullable=true
-     *                 ),
-     *                 @OA\Property(
-     *                     property="works[1][image]",
-     *                     type="string",
-     *                     format="binary",
-     *                     description="Image work 2",
-     *                     nullable=true
-     *                 ),
-     *                 @OA\Property(
-     *                     property="works[2][image]",
-     *                     type="string",
-     *                     format="binary",
-     *                     description="Image work 3",
-     *                     nullable=true
-     *                 ),
-     *                 @OA\Property(
-     *                     property="works[3][image]",
-     *                     type="string",
-     *                     format="binary",
-     *                     description="Image work 4",
-     *                     nullable=true
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response="201",
-     *         description="Employee updated successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="Employee updated successfully")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response="422",
-     *         description="Validation errors",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string", example="Validation errors"),
-     *             @OA\Property(
-     *                 property="errors",
-     *                 type="object",
-     *                 @OA\AdditionalProperties(type="array", @OA\Items(type="string"))
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response="404",
-     *         description="Employee not found",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Employee not found")
-     *         )
-     *     )
-     * )
-     */
 
-
-     public function updateWorksImage(Request $request, $user_id)
-     {
-         $validatedData = Validator::make($request->all(), [
-             'works' => 'nullable|array|max:4',
-             'works.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-         ]);
-
-         if ($validatedData->fails()) {
-             return response()->json(['status' => false, 'message' => $validatedData->errors()], 401);
-         }
-
-         if ($request->has('works')) {
-             $works = $request->works;
-             $works = array_pad($works, 4, ['image' => null]);
-             $existingWorks = EmployeeWork::where('user_id', $user_id)->get();
-
-             // Check if user exists
-             if ($existingWorks->isEmpty()) {
-                 return response()->json(['status' => false, 'message' => 'User not found'], 404);
-             }
-
-             $updateData = [];
-             $newWorks = [];
-
-             foreach ($works as $index => $work) {
-                 $workImageUrl = null;
-
-                 if (isset($work['image']) && $work['image']) {
-                     $workImage = $work['image'];
-                     $workImagePath = $workImage->store('employee_works', 'public');
-                     $workImageUrl = Storage::url($workImagePath);
-                 }
-
-                 if (isset($existingWorks[$index])) {
-                     $existingWork = $existingWorks[$index];
-                     if ($existingWork->image_url && $workImageUrl) {
-                         $oldImagePath = str_replace('/storage', 'public', parse_url($existingWork->image_url, PHP_URL_PATH));
-                         Storage::delete($oldImagePath);
-                     }
-                     $updateData[] = [
-                         'id' => $existingWork->id,
-                         'image_url' => $workImageUrl ?? $existingWork->image_url,
-                     ];
-                 } else {
-                     $newWorks[] = [
-                         'user_id' => $user_id,
-                         'image_url' => $workImageUrl,
-                     ];
-                 }
-             }
-
-             // Perform bulk update
-             if (!empty($updateData)) {
-                 foreach ($updateData as $data) {
-                     EmployeeWork::where('id', $data['id'])->update([
-                         'image_url' => $data['image_url']
-                     ]);
-                 }
-             }
-
-             // Perform bulk insert
-             if (!empty($newWorks)) {
-                 EmployeeWork::insert($newWorks);
-             }
-
-             // Delete excess works
-             if (count($existingWorks) > count($works)) {
-                 $excessWorks = $existingWorks->slice(count($works));
-                 foreach ($excessWorks as $work) {
-                     if ($work->image_url) {
-                         $workImagePath = str_replace('/storage', 'public', parse_url($work->image_url, PHP_URL_PATH));
-                         Storage::delete($workImagePath);
-                     }
-                     $work->delete();
-                 }
-             }
-         }
-         return $this->apiResponse('Edit employee works image successfully',200);
-     }
 
 
     /**
      * @OA\Get(
      *     path="/api/employee/employeeProfile/{id}",
      *     summary="Show employee profile",
-     *     description="Show employee profile by employee id",
+     *     description="Show employee profile by user id where type employee",
      *     tags={"Employee"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="ID of the employee to show profile",
+     *         description="ID of the user where user type employee to show profile",
      *         required=true,
      *         @OA\Schema(
      *             type="integer"
@@ -696,149 +510,21 @@ class EmployeeController extends Controller
      * )
      */
 
-     public function employeeProfile($id)
-     {
-        $employee = Employee::findOrFail($id);
+    public function employeeProfile($id)
+    {
+        try{
+        // find user where type employee
+        $user = User::where('id',$id)->where('userType','employee')->first();
 
-         // Optionally compute the average rating if needed
-         // $averageRating = $this->feedbackService->getAverageRatingPerEmployee($id);
+        // get all employee data
+        $employee = Employee::with(['user','service', 'section','user.locations','feedbacks'])->where('user_id',$user->id)->first();
 
-         // Prepare additional data if required
-         // $employee->average_rating = $averageRating['average_rating'] ?? null;
-
-        return $this->apiResponse('Employee profile fetched successfully',200,new EmployeeResource($employee));
-     }
-
-
-
-    /**
-     * @OA\Post(
-     *     path="/api/employee/editEmployeeProfile/{id}",
-     *     summary="Update employee profile",
-     *     operationId="editEmployeeProfile",
-     *     tags={"Employee"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="ID of the employee to update",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\RequestBody(
-     *         required=false,
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *             @OA\Schema(
-     *                 @OA\Property(
-     *                     property="name",
-     *                     type="string",
-     *                     description="Name of the employee"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="desc",
-     *                     type="string",
-     *                     description="Description of the employee"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="min_price",
-     *                     type="integer",
-     *                     description="Minimum price"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="image",
-     *                     type="string",
-     *                     format="binary",
-     *                     description="Profile image of the employee"
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Employee profile updated successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="status",
-     *                 type="boolean",
-     *                 example=true
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Employee profile updated successfully"
-     *             ),
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Validation error",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="status",
-     *                 type="boolean",
-     *                 example=false
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Validation error message"
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Employee not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="status",
-     *                 type="boolean",
-     *                 example=false
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Employee not found"
-     *             )
-     *         )
-     *     )
-     * )
-     */
-
-
-     public function editEmployeeProfile(UpdateEmployeeProfileRequest $request, $id)
-     {
-         $validatedData = $request->validated();
-
-         $employee = Employee::findOrFail($id);
-
-         // Update user data
-         $user = $employee->user;
-
-         $user->name = $validatedData['name'] ?? $user->name;
-
-         if ($request->hasFile('image')) {
-             // Delete the old image if exists
-             if ($user->image) {
-                 $oldImagePath = str_replace('/storage', 'public', parse_url($user->image, PHP_URL_PATH));
-                 Storage::delete($oldImagePath);
-             }
-
-             // Store the new image
-             $imagePath = $request->file('image')->store('users_folder', 'public');
-             $user->image = Storage::url($imagePath);
-         }
-         $user->save();
-
-         // Update employee data
-         $employee->desc = $validatedData['desc'] ?? $employee->desc;
-         $employee->min_price = $validatedData['min_price'] ?? $employee->min_price;
-         $employee->save();
-
-        return $this->apiResponse('Employee profile updated successfully',200,new EmployeeProfileResource($employee));
-     }
+        return $this->apiResponse('Employee profile fetched successfully',200,new EmployeeProfileResource($employee));
+        }
+        catch (Throwable $e) {
+            return $this->apiResponse('something error',500);
+        }
+    }
 
 
 
@@ -1039,61 +725,6 @@ class EmployeeController extends Controller
 
 
 
-    /**
-     * @OA\Get(
-     *     path="/api/employee/showEmployeeLastWorks/{user_id}",
-     *     summary="Show all employee work images",
-     *     description="Show all employee work images by user ID",
-     *     tags={"Employee"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="user_id",
-     *         in="path",
-     *         description="ID of the user to show all last works images",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Show last work successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="string", example="true"),
-     *             @OA\Property(property="Employee Work Image", type="array", @OA\Items(type="string"))
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="No user found",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="No user found")
-     *         )
-     *     )
-     * )
-     */
-
-    public function showEmployeeLastWorks($id){
-        $employeeWork = EmployeeWork::where('user_id',$id)->get();
-        if($employeeWork ->count() != 0){
-            foreach($employeeWork as $employeeWorks){
-                $employeeWorks;
-            }
-        return $this->apiResponse('show employee last works successfully',200,$employeeWork);
-        }
-
-        else{
-            return $this->apiResponse('Not found employee last works',404);
-        }
-
-    }
-
-
-
-
 
     /**
      * @OA\Get(
@@ -1142,84 +773,87 @@ class EmployeeController extends Controller
 
      public function showAllEmployeesBySectionIdAndServiceId($section_id, $service_id)
      {
-         $allEmployees = Employee::where('service_id', $service_id)
-             ->where('section_id', $section_id)
-             ->get();
+        try{
+            $allEmployees = Employee::where('service_id', $service_id)
+            ->where('section_id', $section_id)
+            ->get();
 
-         if ($allEmployees->isEmpty()) {
-             return $this->apiResponse('No employees found for this service', 404);
-         }
+            if ($allEmployees->isEmpty()) {
+                return $this->apiResponse('No employees found for this service', 404);
+            }
 
-         $allEmployees->load('works', 'user', 'user.locations', 'section', 'service');
+            $allEmployees->load('works', 'user', 'user.locations', 'section', 'service');
 
-         return $this->apiResponse(
-             'Show all employees successfully',
-             200,
-             EmployeeResource::collection($allEmployees)
-         );
+            return $this->apiResponse(
+                'Show all employees successfully',
+                200,
+                EmployeeResource::collection($allEmployees)
+            );
+        }
+
+        catch (Throwable $e) {
+            return $this->apiResponse('something error', 500, $e->getMessage());
+        }
      }
 
 
 
-
-
-
-
-
     /**
-     * @OA\Get(
-     *     path="/api/employee/getTotalOrders/{id}/orders/total",
-     *     summary="Get total count of orders for employee",
+     * @OA\post(
+     *     path="/api/employee/showAllEmployeeBylocation/{city}",
+     *     description="Show all employee by city",
      *     tags={"Employee"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
-     *         name="id",
+     *         name="city",
      *         in="path",
+     *         description="city to show all employees in this city",
      *         required=true,
-     *         description="ID of the employee",
      *         @OA\Schema(
-     *             type="integer",
-     *         ),
+     *             type="string"
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Success",
+     *         description="Show all employees successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="total orders", type="integer", example=10)
+     *             @OA\Property(property="status", type="boolean"),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="object")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="No employee found",
+     *         description="Employee not found",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="status", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="No employee found")
+     *             @OA\Property(property="status", type="boolean"),
+     *             @OA\Property(property="message", type="string")
      *         )
      *     )
      * )
      */
 
-    //  public function getTotalOrders($employeeId)
-    //  {
-    //      $employee = Employee::find($employeeId);
+     public function showAllEmployeeByLocation($city)
+     {
+        try{
+            $locations = Location::whereHas('user', function($q) use ($city) {
+                $q->where('city', $city)
+                  ->where('userType', 'employee');
+            })->with(['user.employee.service', 'user.employee.section'])->get();
 
-    //      if (!$employee) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'no employee found',
-    //         ],404);
-    //      }
+            // Transform the data using the ShowEmployeeByLocationResource
+            $data = ShowEmployeeByLocationResource::collection($locations);
 
-    //      $totalOrders = $employee->orders()->count();
+            return $this->apiResponse('Show all employees successfully', 200, $data);
+        }
 
-    //      return response()->json([
-    //         'status' => true,
-    //         'total orders' => $totalOrders,
-    //     ],200);
-    //  }
+        catch (Throwable $e) {
+            return $this->apiResponse('something error', 500, $e->getMessage());
+        }
+
+     }
 
 
 

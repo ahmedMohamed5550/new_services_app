@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('service_id')->constrained('services')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->text('description')->nullable();
-            $table->string('phone_number_1', 20)->nullable();
             $table->string('phone_number_2', 20)->nullable();
             $table->string('mobile_number_1', 20)->nullable();
             $table->string('mobile_number_2', 20)->nullable();
@@ -28,6 +27,10 @@ return new class extends Migration
             $table->string('website', 255)->nullable();
             $table->enum('checkByAdmin',['accepted','waiting','rejected'])->default('waiting');
             $table->enum('status',['available','busy'])->default('available');
+            $table->enum('type',['company','individual'])->default('individual');
+            $table->string('imageSSN')->nullable();
+            $table->string('livePhoto')->nullable();
+            $table->string('nationalId')->unique()->nullable();
         });
     }
 

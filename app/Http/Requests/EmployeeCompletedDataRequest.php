@@ -15,10 +15,13 @@ class EmployeeCompletedDataRequest extends FormRequest
     {
         return [
             'description' => 'required|string',
+            'type' => 'required|string',
+            'imageSSN' => 'nullable|file|mimes:jpeg,png,jpg,gif',
+            'livePhoto' => 'nullable|file|mimes:jpeg,png,jpg,gif',
+            'nationalId' => 'nullable|regex:/^([0-9\s\-\+\(\)]*)$/|min:13',
             'user_id' => 'required|exists:users,id',
             'service_id' => 'required|exists:services,id',
             'section_id' => 'required|exists:sections,id',
-            'phone_number_1'=>'nullable|string',
             'phone_number_2'=>'nullable|string',
             'mobile_number_1'=>'nullable|string',
             'mobile_number_2'=>'nullable|string',
@@ -32,8 +35,6 @@ class EmployeeCompletedDataRequest extends FormRequest
             'specialMarque' => 'nullable|string|max:255',
             'lat' => 'nullable|numeric',
             'long' => 'nullable|numeric',
-            'works' => 'nullable|array|max:4',
-            'works.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
         ];
     }
 }

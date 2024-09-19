@@ -18,12 +18,26 @@
                         "multipart/form-data": {
                             "schema": {
                                 "properties": {
+                                    "type": {
+                                        "description": "choose between ['company','individual']",
+                                        "type": "string"
+                                    },
                                     "description": {
                                         "description": "Description of the employee",
                                         "type": "string"
                                     },
-                                    "phone_number_1": {
-                                        "description": "phone_number_1",
+                                    "imageSSN": {
+                                        "description": "صورة الباطاقة",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "livePhoto": {
+                                        "description": "صورة لايف",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "nationalId": {
+                                        "description": " الرقم القومي",
                                         "type": "string"
                                     },
                                     "phone_number_2": {
@@ -89,30 +103,6 @@
                                     "section_id": {
                                         "description": "Section ID",
                                         "type": "integer"
-                                    },
-                                    "works[0][image]": {
-                                        "description": "Image work 1",
-                                        "type": "string",
-                                        "format": "binary",
-                                        "nullable": true
-                                    },
-                                    "works[1][image]": {
-                                        "description": "Image work 2",
-                                        "type": "string",
-                                        "format": "binary",
-                                        "nullable": true
-                                    },
-                                    "works[2][image]": {
-                                        "description": "Image work 3",
-                                        "type": "string",
-                                        "format": "binary",
-                                        "nullable": true
-                                    },
-                                    "works[3][image]": {
-                                        "description": "Image work 4",
-                                        "type": "string",
-                                        "format": "binary",
-                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
@@ -311,147 +301,19 @@
                 ]
             }
         },
-        "/api/employee/updateWorksImage/{user_id}": {
-            "post": {
-                "tags": [
-                    "Employee"
-                ],
-                "summary": "Edit an employee works image",
-                "operationId": "c1822af1deb09f2dd47b07a37fb470d5",
-                "parameters": [
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "description": "ID of the user",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "properties": {
-                                    "works[0][image]": {
-                                        "description": "Image work 1",
-                                        "type": "string",
-                                        "format": "binary",
-                                        "nullable": true
-                                    },
-                                    "works[1][image]": {
-                                        "description": "Image work 2",
-                                        "type": "string",
-                                        "format": "binary",
-                                        "nullable": true
-                                    },
-                                    "works[2][image]": {
-                                        "description": "Image work 3",
-                                        "type": "string",
-                                        "format": "binary",
-                                        "nullable": true
-                                    },
-                                    "works[3][image]": {
-                                        "description": "Image work 4",
-                                        "type": "string",
-                                        "format": "binary",
-                                        "nullable": true
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Employee updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Employee updated successfully"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation errors",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "error"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Validation errors"
-                                        },
-                                        "errors": {
-                                            "type": "object",
-                                            "additionalProperties": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Employee not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Employee not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/employee/employeeProfile/{id}": {
             "get": {
                 "tags": [
                     "Employee"
                 ],
                 "summary": "Show employee profile",
-                "description": "Show employee profile by employee id",
+                "description": "Show employee profile by user id where type employee",
                 "operationId": "2297a9c817dc43c2ad915af565cd1fe9",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of the employee to show profile",
+                        "description": "ID of the user where user type employee to show profile",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -491,122 +353,6 @@
                                         },
                                         "message": {
                                             "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/employee/editEmployeeProfile/{id}": {
-            "post": {
-                "tags": [
-                    "Employee"
-                ],
-                "summary": "Update employee profile",
-                "operationId": "editEmployeeProfile",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the employee to update",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": false,
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "properties": {
-                                    "name": {
-                                        "description": "Name of the employee",
-                                        "type": "string"
-                                    },
-                                    "desc": {
-                                        "description": "Description of the employee",
-                                        "type": "string"
-                                    },
-                                    "min_price": {
-                                        "description": "Minimum price",
-                                        "type": "integer"
-                                    },
-                                    "image": {
-                                        "description": "Profile image of the employee",
-                                        "type": "string",
-                                        "format": "binary"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Employee profile updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Employee profile updated successfully"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Validation error message"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Employee not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Employee not found"
                                         }
                                     },
                                     "type": "object"
@@ -882,76 +628,6 @@
                 ]
             }
         },
-        "/api/employee/showEmployeeLastWorks/{user_id}": {
-            "get": {
-                "tags": [
-                    "Employee"
-                ],
-                "summary": "Show all employee work images",
-                "description": "Show all employee work images by user ID",
-                "operationId": "3acec25212b0b268039cdfd10e73b38d",
-                "parameters": [
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "description": "ID of the user to show all last works images",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Show last work successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "true"
-                                        },
-                                        "Employee Work Image": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "No user found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "No user found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/employee/section/{section_id}/service/{service_id}": {
             "get": {
                 "tags": [
@@ -1019,6 +695,286 @@
                                     },
                                     "type": "object"
                                 }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/employee/showAllEmployeeBylocation/{city}": {
+            "post": {
+                "tags": [
+                    "Employee"
+                ],
+                "description": "Show all employee by city",
+                "operationId": "aeb8198ae718b4b5177093088677b637",
+                "parameters": [
+                    {
+                        "name": "city",
+                        "in": "path",
+                        "description": "city to show all employees in this city",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show all employees successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Employee not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/feedback/create": {
+            "post": {
+                "tags": [
+                    "Feedback"
+                ],
+                "summary": "Add new feedback to employee",
+                "operationId": "c9fde4288ef8cb1cd80784fd275383b9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "rating",
+                                    "user_id",
+                                    "employee_id"
+                                ],
+                                "properties": {
+                                    "comment": {
+                                        "description": "Feedback comment",
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "rating": {
+                                        "description": "Rating (1-5)",
+                                        "type": "integer"
+                                    },
+                                    "user_id": {
+                                        "description": "User ID where type user",
+                                        "type": "integer"
+                                    },
+                                    "employee_id": {
+                                        "description": "user ID where type employee",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Feedback added successfully"
+                    },
+                    "401": {
+                        "description": "Validation errors",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/feedback/getEmployeeFeedback/{user_id}": {
+            "get": {
+                "tags": [
+                    "Feedback"
+                ],
+                "summary": "Get all feedback for an employee",
+                "operationId": "6a63fb04a5c2dfa5ca5c077eb68c3909",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "user ID where type emoloyee",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No feedback found for this employee",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/feedback/delete/{id}": {
+            "delete": {
+                "tags": [
+                    "Feedback"
+                ],
+                "summary": "Delete a feedback",
+                "operationId": "2686d8b6ccdfd851c03764be1202a32a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the feedback to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Feedback deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No feedback found",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/feedback/edit/{id}": {
+            "post": {
+                "tags": [
+                    "Feedback"
+                ],
+                "summary": "Edit a feedback",
+                "operationId": "editFeedback",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the feedback",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "comment",
+                                    "rating"
+                                ],
+                                "properties": {
+                                    "comment": {
+                                        "description": "Comment of the feedback",
+                                        "type": "string"
+                                    },
+                                    "rating": {
+                                        "description": "Rating (1-5)",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Feedback updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Validation errors",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
                             }
                         }
                     }
@@ -2316,6 +2272,10 @@
         {
             "name": "Employee",
             "description": "Employee"
+        },
+        {
+            "name": "Feedback",
+            "description": "Feedback"
         },
         {
             "name": "images",

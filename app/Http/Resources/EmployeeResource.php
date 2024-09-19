@@ -16,8 +16,11 @@ class EmployeeResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'type' => $this->type,
+            'imageSSN' => $this->imageSSN,
+            'livePhoto' => $this->livePhoto,
+            'nationalId' => $this->nationalId,
             'description' => $this->description,
-            'phone_number_1' => $this->phone_number_1,
             'phone_number_2' => $this->phone_number_2,
             'mobile_number_1' => $this->mobile_number_1,
             'mobile_number_2' => $this->mobile_number_2,
@@ -28,7 +31,7 @@ class EmployeeResource extends JsonResource
             'user' => $this->whenLoaded('user'),
             'service' => $this->whenLoaded('service'),
             'section' => $this->whenLoaded('section'),
-            'works' => $this->whenLoaded('works'),
+            // 'works' => $this->whenLoaded('works'),
             'locations' => $this->whenLoaded('user.locations')
         ];
     }

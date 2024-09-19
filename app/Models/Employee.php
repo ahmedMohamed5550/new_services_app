@@ -11,8 +11,11 @@ class Employee extends Model
     use HasFactory,Notifiable;
 
     protected $fillable=[
+        'type',
+        'imageSSN',
+        'livePhoto',
+        'nationalId',
         'description',
-        'phone_number_1',
         'phone_number_2',
         'mobile_number_1',
         'mobile_number_2',
@@ -34,7 +37,7 @@ class Employee extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function section()
@@ -49,7 +52,7 @@ class Employee extends Model
 
     public function feedbacks()
     {
-        return $this->hasMany(Feedback::class);
+        return $this->hasMany(Feedback::class,'employee_id','user_id');
     }
 
     public function images()

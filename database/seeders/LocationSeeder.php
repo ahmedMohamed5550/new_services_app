@@ -15,26 +15,63 @@ class LocationSeeder extends Seeder
     {
         Location::updateOrCreate(
             [
-                'city' => 'Lake Sarahmouth',
+                'city' => 'Assiut',
                 'bitTitle' => 'Howard Ridge',
                 'street' => '97986 Darlene Plaza',
                 'specialMarque' => 'Davis PLC',
-                'lat' => 43.979282,
-                'long' => 48.233496,
+                'lat' => 27.180956,
+                'long' => 31.183683,
                 'user_id' => 1,
             ],
         );
 
         Location::updateOrCreate(
             [
-                'city' => 'South Thomasmouth',
+                'city' => 'Assiut',
                 'bitTitle' => 'Adam Islands',
                 'street' => '1581 Butler Circle',
                 'specialMarque' => 'Gibson, Burns and Hughes',
-                'lat' => -72.558646,
-                'long' => -86.585523,
-                'user_id' => 1,
+                'lat' => 27.185658,
+                'long' => 31.189061,
+                'user_id' => 2,
             ],
         );
+
+        Location::updateOrCreate(
+            [
+                'city' => 'Assiut',
+                'bitTitle' => 'Adam Islands',
+                'street' => '1581 Butler Circle',
+                'specialMarque' => 'Gibson, Burns and Hughes',
+                'lat' => 27.181587,
+                'long' => 31.175978,
+                'user_id' => 3,
+            ],
+        );
+
+        Location::updateOrCreate(
+            [
+                'city' => 'Assiut',
+                'bitTitle' => 'Adam Islands',
+                'street' => '1581 Butler Circle',
+                'specialMarque' => 'Gibson, Burns and Hughes',
+                'lat' => 27.179998,
+                'long' => 31.190001,
+                'user_id' => 4,
+            ],
+        );
+
+        Location::updateOrCreate(
+            [
+                'city' => 'Assiut',
+                'bitTitle' => 'Adam Islands',
+                'street' => '1581 Butler Circle',
+                'specialMarque' => 'Gibson, Burns and Hughes',
+                'lat' => 27.186456,
+                'long' => 31.200123,
+                'user_id' => 5,
+            ],
+        );
+
     }
 }

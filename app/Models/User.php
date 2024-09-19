@@ -34,7 +34,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function employee()
     {
-        return $this->belongsTo(Employee::class);
+        return $this->hasOne(Employee::class, 'user_id');
     }
 
     public function locations()

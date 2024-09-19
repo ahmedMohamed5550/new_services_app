@@ -7,6 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ImageCompanyController;
 
@@ -66,15 +67,21 @@ Route::prefix('images')->group(function(){
 Route::controller(EmployeeController::class)->prefix('employee')->group(function(){
     Route::post('/employeeCompleteData','employeeCompleteData');
     Route::Post("/updateEmployeeCompleteData/{id}",'updateEmployeeCompleteData');
-    Route::Post("/updateWorksImage/{id}",'updateWorksImage');
     Route::get('/section/{section_id}/service/{service_id}','showAllEmployeesBySectionIdAndServiceId');
     Route::get("/employeeProfile/{id}",'employeeProfile');
-    Route::get("/getTotalOrders/{id}/orders/total",'getTotalOrders');
-    Route::Post("/editEmployeeProfile/{id}",'editEmployeeProfile');
-    Route::get("/showEmployeeLastWorks/{id}",'showEmployeeLastWorks');
+    Route::post("/showAllEmployeeBylocation/{city}",'showAllEmployeeBylocation');
     Route::post('/changeEmployeeStatus/{id}', 'changeEmployeeStatus');
     Route::post('/changeCheckByAdmin/{id}', 'changeCheckByAdmin');
 });
+
+Route::controller(FeedbackController::class)->prefix('feedback')->group(function () {
+    Route::post('/create','store');
+    Route::get('/getEmployeeFeedback/{id}', 'getEmployeeFeedback');
+    Route::delete('/delete/{id}', 'delete');
+    Route::post('/edit/{id}', 'update');
+});
+
+
 
 
 
