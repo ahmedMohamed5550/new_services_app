@@ -60,4 +60,10 @@ class Employee extends Model
         return $this->hasMany(ImageCompany::class);
     }
 
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class , 'employee_id','user_id');
+    }
+
 }

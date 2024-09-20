@@ -32,7 +32,8 @@ class EmployeeResource extends JsonResource
             'service' => $this->whenLoaded('service'),
             'section' => $this->whenLoaded('section'),
             // 'works' => $this->whenLoaded('works'),
-            'locations' => $this->whenLoaded('user.locations')
+            'locations' => $this->whenLoaded('user.locations'),
+            'likes'=>$this->whenLoaded('likes')->count(),
         ];
     }
 }

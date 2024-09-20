@@ -1036,6 +1036,53 @@
                 ]
             }
         },
+        "/api/like/create": {
+            "post": {
+                "tags": [
+                    "like"
+                ],
+                "summary": "Add new like to employee Or Delete Like",
+                "operationId": "58584f6a5f3d175d93058d01f9789801",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "description": "User ID where type user",
+                                        "type": "integer"
+                                    },
+                                    "employee_id": {
+                                        "description": "user ID where type employee",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "like added successfully"
+                    },
+                    "401": {
+                        "description": "Validation errors",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/location/store": {
             "post": {
                 "tags": [
@@ -2280,6 +2327,10 @@
         {
             "name": "images",
             "description": "images"
+        },
+        {
+            "name": "like",
+            "description": "like"
         },
         {
             "name": "location",

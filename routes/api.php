@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SectionController;
@@ -48,6 +49,11 @@ Route::prefix('services')->group(function(){
     Route::delete('/delete/{id}' , [ServiceController::class , 'delete']);
 });
 
+Route::prefix('like')->group(function(){
+
+Route::post('/create' , [LikeController::class , 'store']);
+
+});
 
 Route::prefix('sections')->group(function(){
     Route::post('/create', [SectionController::class, 'store']);

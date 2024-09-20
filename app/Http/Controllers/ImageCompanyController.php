@@ -66,7 +66,8 @@ class ImageCompanyController extends Controller
      $company_images = [];
 
      foreach ($request->file('image_path') as $image) {
-         $path = $image->store('company_images', 'uploads');
+        $fileName = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
+         $path = $image->storeAs('company_images', $fileName ,'uploads');
 
          $imageRecord = ImageCompany::create([
              'image_path' => $path,

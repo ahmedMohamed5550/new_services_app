@@ -517,7 +517,7 @@ class EmployeeController extends Controller
         $user = User::where('id',$id)->where('userType','employee')->first();
 
         // get all employee data
-        $employee = Employee::with(['user','service', 'section','user.locations','feedbacks'])->where('user_id',$user->id)->first();
+        $employee = Employee::with(['user','service', 'section','user.locations','feedbacks' , 'likes'])->where('user_id',$user->id)->first();
 
         return $this->apiResponse('Employee profile fetched successfully',200,new EmployeeProfileResource($employee));
         }
@@ -782,7 +782,7 @@ class EmployeeController extends Controller
                 return $this->apiResponse('No employees found for this service', 404);
             }
 
-            $allEmployees->load('works', 'user', 'user.locations', 'section', 'service');
+            $allEmployees->load('works', 'user', 'user.locations', 'section', 'service' , 'likes');
 
             return $this->apiResponse(
                 'Show all employees successfully',

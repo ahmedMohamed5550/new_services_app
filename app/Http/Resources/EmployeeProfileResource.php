@@ -59,6 +59,7 @@ class EmployeeProfileResource extends JsonResource
                     'updated_at' => $feedback->created_at->toDateTimeString(),
                 ];
             }),
+            'likes'=>$this->whenLoaded('likes')->count(),
         ];
     }
 }
