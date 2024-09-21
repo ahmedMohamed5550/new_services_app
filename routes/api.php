@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LikeController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\EmployeeWorkController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ImageCompanyController;
@@ -63,13 +65,6 @@ Route::prefix('sections')->group(function(){
     Route::post('/edit/{id}' , [SectionController::class , 'update']);
     Route::delete('/delete/{id}' , [SectionController::class , 'delete']);
 });
-Route::prefix('images')->group(function(){
-    Route::post('/create', [ImageCompanyController::class, 'store']);
-    // Route::get('/', [SectionController::class, 'index']);
-    // Route::get('/show/{id}' , [SectionController::class , 'show']);
-    // Route::post('/edit/{id}' , [SectionController::class , 'update']);
-    // Route::delete('/delete/{id}' , [SectionController::class , 'delete']);
-});
 
 Route::controller(EmployeeController::class)->prefix('employee')->group(function(){
     Route::post('/employeeCompleteData','employeeCompleteData');
@@ -87,6 +82,17 @@ Route::controller(FeedbackController::class)->prefix('feedback')->group(function
     Route::delete('/delete/{id}', 'delete');
     Route::post('/edit/{id}', 'update');
 });
+
+Route::controller(AdminController::class)->prefix('Admin')->group(function(){
+    Route::post('/changeEmployeeStatus/{id}', 'changeEmployeeStatus');
+    Route::post('/changeCheckByAdmin/{id}', 'changeCheckByAdmin');
+});
+
+Route::controller(EmployeeWorkController::class)->prefix('work')->group(function(){
+    Route::post('/create', 'store');
+});
+
+
 
 
 

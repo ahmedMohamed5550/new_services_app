@@ -47,17 +47,12 @@ class Employee extends Model
 
     public function works()
     {
-        return $this->hasMany(EmployeeWork::class, 'user_id', 'user_id');
+        return $this->hasMany(EmployeeWork::class,'employee_id','user_id');
     }
 
     public function feedbacks()
     {
         return $this->hasMany(Feedback::class,'employee_id','user_id');
-    }
-
-    public function images()
-    {
-        return $this->hasMany(ImageCompany::class);
     }
 
 

@@ -12,12 +12,12 @@ class EmployeeWork extends Model
     protected $table= "employee_works";
 
     protected $fillable = [
-        'user_id',
+        'employee_id',
         'image_url',
+        'video_url',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
+    public function employee(){
+        return $this->BelongsTo(User::class,'employee_id','id');
     }
 }

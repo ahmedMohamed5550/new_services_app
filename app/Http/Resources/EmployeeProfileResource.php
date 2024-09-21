@@ -32,6 +32,7 @@ class EmployeeProfileResource extends JsonResource
                 'website' => $this->website,
                 'total_rates' => $this->feedbacks->count(),
                 'average_rating' => round($this->feedbacks->avg('rating'), 2),
+                'likes' => $this->likes->count(),
             ],
             'service' => [
                 'id' => $this->service->id,
@@ -41,6 +42,13 @@ class EmployeeProfileResource extends JsonResource
                 'id' => $this->section->id,
                 'name' => $this->section->name,
             ],
+            'works' => $this->works->isNotEmpty() ? $this->works->map(function ($work) {
+                return [
+                    'id' => $work->id,
+                    'image_url' => $work->image_url ?? null,
+                    'video_url' => $work->video_url ?? null,
+                ];
+            }) : null,
             'location' => $this->user->locations->first() ? [
                 'id' => $this->user->locations->first()->id,
                 'city' => $this->user->locations->first()->city,
@@ -59,7 +67,6 @@ class EmployeeProfileResource extends JsonResource
                     'updated_at' => $feedback->created_at->toDateTimeString(),
                 ];
             }),
-            'likes'=>$this->whenLoaded('likes')->count(),
         ];
     }
 }
