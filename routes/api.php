@@ -52,6 +52,7 @@ Route::prefix('services')->group(function(){
 Route::prefix('like')->group(function(){
 
 Route::post('/create' , [LikeController::class , 'store']);
+Route::get('/show/{id}' , [LikeController::class , 'showLikes']);
 
 });
 

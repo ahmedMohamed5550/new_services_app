@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
 use App\Http\Requests\LikeRequest;
 use App\Http\Resources\LikeResource;
+use App\Http\Resources\ShowLikeResource;
 
 class LikeController extends Controller
 {
@@ -66,6 +67,55 @@ class LikeController extends Controller
         }
     }
 
-    
+     /**
+     * @OA\Get(
+     *     path="/api/like/show/{id}",
+     *     summary="Show Likes for employee",
+     *     description="Show like for employee by user id where type employee",
+     *     tags={"like"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the user where user type employee to show likes",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Show employee likes successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean"),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No Likes For Employee",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean"),
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     )
+     * )
+     */
+
+     public function showLikes($id)
+     {
+        $likes = Like::with('user')->where('employee_id' , $id)->get();
+
+        if(count($likes) > 0)
+        {
+            return $this->apiResponse('All Likes' , 200 , ShowLikeResource::collection($likes));
+        }
+        return $this->apiRespose('no likes for employee' , 404);
+
+     }
+
 
 }
