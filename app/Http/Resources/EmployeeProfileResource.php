@@ -55,6 +55,7 @@ class EmployeeProfileResource extends JsonResource
                 'bitTitle' => $this->user->locations->first()->bitTitle,
                 'street' => $this->user->locations->first()->street,
                 'specialMarque' => $this->user->locations->first()->specialMarque,
+                'zipCode' => $this->user->locations->first()->zipCode,
                 'lat' => $this->user->locations->first()->lat,
                 'long' => $this->user->locations->first()->long,
             ] : null,

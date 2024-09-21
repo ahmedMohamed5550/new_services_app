@@ -119,6 +119,11 @@ class EmployeeController extends Controller
      *                     description="specialMarque"
      *                 ),
      *                 @OA\Property(
+     *                     property="zipCode",
+     *                     type="string",
+     *                     description=" city zip code"
+     *                 ),
+     *                 @OA\Property(
      *                     property="lat",
      *                     type="integer",
      *                     description="lat"

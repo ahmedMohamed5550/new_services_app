@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('bitTitle')->nullable();
             $table->string('street')->nullable();
             $table->string('specialMarque')->nullable();
+            $table->string('zipCode')->nullable();
             $table->double('lat')->nullable();
             $table->double('long')->nullable();
             $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade');

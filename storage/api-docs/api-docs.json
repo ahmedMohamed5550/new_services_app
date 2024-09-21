@@ -344,6 +344,10 @@
                                         "description": "specialMarque",
                                         "type": "string"
                                     },
+                                    "zipCode": {
+                                        "description": " city zip code",
+                                        "type": "string"
+                                    },
                                     "lat": {
                                         "description": "lat",
                                         "type": "integer"
@@ -1123,6 +1127,10 @@
                                         "description": "Special landmark near the location",
                                         "type": "string"
                                     },
+                                    "zipCode": {
+                                        "description": " city zip code",
+                                        "type": "string"
+                                    },
                                     "lat": {
                                         "description": "Latitude coordinate",
                                         "type": "number",
@@ -1306,6 +1314,10 @@
                                     },
                                     "specialMarque": {
                                         "description": "Special landmark near the location",
+                                        "type": "string"
+                                    },
+                                    "zipCode": {
+                                        "description": " city zip code",
                                         "type": "string"
                                     },
                                     "lat": {

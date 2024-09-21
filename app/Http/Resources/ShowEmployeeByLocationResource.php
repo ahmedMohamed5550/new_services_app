@@ -16,6 +16,7 @@ class ShowEmployeeByLocationResource extends JsonResource
                 'bitTitle' => $this->bitTitle,
                 'street' => $this->street,
                 'specialMarque' => $this->specialMarque,
+                'zipCode' => $this->zipCode,
                 'lat' => $this->lat,
                 'long' => $this->long,
             ],

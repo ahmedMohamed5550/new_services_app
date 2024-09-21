@@ -33,6 +33,7 @@ class EmployeeCompletedDataRequest extends FormRequest
             'bitTitle' => 'nullable|string|max:255',
             'street' => 'nullable|string|max:255',
             'specialMarque' => 'nullable|string|max:255',
+            'zipCode' => 'nullable|string|max:255',
             'lat' => 'nullable|numeric',
             'long' => 'nullable|numeric',
         ];

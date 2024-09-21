@@ -44,6 +44,11 @@ class LocationController extends Controller
      *                     description="Special landmark near the location"
      *                 ),
      *                 @OA\Property(
+     *                     property="zipCode",
+     *                     type="string",
+     *                     description=" city zip code"
+     *                 ),
+     *                 @OA\Property(
      *                     property="lat",
      *                     type="number",
      *                     format="float",
@@ -194,6 +199,11 @@ class LocationController extends Controller
      *                     description="Special landmark near the location"
      *                 ),
      *                 @OA\Property(
+     *                     property="zipCode",
+     *                     type="string",
+     *                     description=" city zip code"
+     *                 ),
+     *                 @OA\Property(
      *                     property="lat",
      *                     type="number",
      *                     format="float",
@@ -247,6 +257,7 @@ class LocationController extends Controller
         'bitTitle' => 'required|string|max:255',
         'street' => 'required|string|max:255',
         'specialMarque' => 'nullable|string|max:255',
+        'zipCode' => 'nullable|string|max:255',
         'lat' => 'nullable|numeric',
         'long' => 'nullable|numeric',
     ]);
@@ -261,6 +272,7 @@ class LocationController extends Controller
                 'bitTitle' => $request->bitTitle ?? $location->bitTitle,
                 'street' => $request->street ?? $location->street,
                 'specialMarque' => $request->specialMarque ?? $location->specialMarque,
+                'zipCode' => $request->zipCode ?? $location->zipCode,
                 'lat' => $request->lat ?? $location->lat,
                 'long' => $request->long ?? $location->long,
             ]);

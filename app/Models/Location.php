@@ -14,6 +14,7 @@ class Location extends Model
         'bitTitle',
         'street',
         'specialMarque',
+        'zipCode',
         'lat',
         'long',
         'user_id',
