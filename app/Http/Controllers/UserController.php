@@ -63,7 +63,7 @@ class UserController extends Controller
     *     @OA\Property(
     *         property="comment",
     *         type="string",
-    *         description="to access image use https://mahllola.online/public/image  example : https://mahllola.online/public/storage/services_folder/ttyVNuauz67kqXX40jyewMwh3DWpdFjjyJ0pIiPd.jpg "
+    *         description="to access image use https://mahllola.online/public/image  example : https://mahllola.online/public/image_path image_path restore when added image"
     *     ),
      *             )
      *         )

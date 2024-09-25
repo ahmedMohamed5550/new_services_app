@@ -2092,7 +2092,7 @@
                                         "type": "string"
                                     },
                                     "comment": {
-                                        "description": "to access image use https://mahllola.online/public/image  example : https://mahllola.online/public/storage/services_folder/ttyVNuauz67kqXX40jyewMwh3DWpdFjjyJ0pIiPd.jpg ",
+                                        "description": "to access image use https://mahllola.online/public/image  example : https://mahllola.online/public/image_path image_path restore when added image",
                                         "type": "string"
                                     }
                                 },
