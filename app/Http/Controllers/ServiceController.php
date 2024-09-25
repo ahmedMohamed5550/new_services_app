@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
 use App\Http\Requests\ServiceRequest;
 use App\Http\Resources\ServiceResource;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 
 class ServiceController extends Controller
@@ -202,7 +203,9 @@ class ServiceController extends Controller
 
         if($request->hasFile('image'))
         {
-            $image_path = $request->file('image')->store('services_image' , 'uploads');
+            $image_path = $request->file('image')->store('services_image' , 'public');
+            $image_path = Storage::url($image_path);
+            Artisan::call('storage:link');
         }
 
         $validatedData['image'] = $image_path;
@@ -276,7 +279,7 @@ class ServiceController extends Controller
             return $this->failed('not found' , 404);
         }
 
-        $old_image = $service->image;
+
 
         $validatedData = $request->validated();
 
@@ -284,7 +287,19 @@ class ServiceController extends Controller
 
         if($request->hasFile('image'))
         {
-            $new_image = $request->file('image')->store('services_image' , 'uploads');
+
+            $old_image = $service->image;
+            $old_image = str_replace('/storage', 'public', $old_image);
+
+        if(Storage::exists($old_image))
+        {
+            Storage::delete($old_image);
+        }
+
+
+            $new_image = $request->file('image')->store('services_image' , 'public');
+            $new_image = Storage::url($new_image);
+            Artisan::call('storage:link');
         }
         if($new_image != null)
         {
@@ -293,10 +308,7 @@ class ServiceController extends Controller
 
         $service->update($validatedData);
 
-        if($new_image != null && isset($old_image))
-        {
-            Storage::disk('uploads')->delete($old_image);
-        }
+
 
         return $this->apiResponse('service updated Successfully' , 200 , new ServiceResource($service));
 
@@ -343,11 +355,13 @@ class ServiceController extends Controller
 
         $image = $service->image;
 
+
         $service->delete();
 
         if($image != null)
         {
-            Storage::disk('uploads')->delete($image);
+            $image = str_replace('/storage' , 'public' , $image);
+            Storage::delete($image);
         }
 
         return $this->apiResponse('service deleted successfully' , 200 , $service);

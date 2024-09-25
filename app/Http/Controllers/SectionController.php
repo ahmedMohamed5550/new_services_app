@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
 use App\Http\Requests\SectionRequest;
 use App\Http\Resources\SectionResource;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 
 class SectionController extends Controller
@@ -145,7 +146,9 @@ class SectionController extends Controller
 
         if($request->hasFile('image'))
         {
-            $image_path = $request->file('image')->store('sections_image' , 'uploads');
+            $image_path = $request->file('image')->store('sections_image' , 'public');
+            $image_path = Storage::url($image_path);
+            Artisan::call('storage:link');
         }
 
         $validatedData['image'] = $image_path;
@@ -215,7 +218,7 @@ class SectionController extends Controller
             return $this->failed('not found' , 404);
         }
 
-        $old_image = $section->image;
+
 
         $validatedData = $request->validated();
 
@@ -223,7 +226,18 @@ class SectionController extends Controller
 
         if($request->hasFile('image'))
         {
-            $new_image = $request->file('image')->store('sections_image' , 'uploads');
+
+            $old_image = $section->image;
+            $old_image = str_replace('/storage', 'public', $old_image);
+
+        if(Storage::exists($old_image))
+        {
+            Storage::delete($old_image);
+        }
+
+            $new_image = $request->file('image')->store('sections_image' , 'public');
+            $new_image = Storage::url($new_image);
+            Artisan::call('storage:link');
         }
         if($new_image != null)
         {
@@ -232,10 +246,7 @@ class SectionController extends Controller
 
         $section->update($validatedData);
 
-        if($new_image != null && isset($old_image))
-        {
-            Storage::disk('uploads')->delete($old_image);
-        }
+
 
         return $this->apiResponse('section updated Successfully' , 200 , new SectionResource($section));
 
@@ -282,11 +293,13 @@ class SectionController extends Controller
 
         $image = $section->image;
 
+
         $section->delete();
 
         if($image != null)
         {
-            Storage::disk('uploads')->delete($image);
+            $image = str_replace('/storage', 'public', $image);
+            Storage::delete($image);
         }
 
         return $this->apiResponse('section deleted successfully' , 200 , $section);

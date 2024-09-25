@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\EditUserProfileRequest;
-use App\Traits\ApiResponseTrait;
-use App\Http\Resources\UserResource;
-use App\Http\Requests\UserRequest;
-use App\Http\Resources\UpdateUserProfileResource;
+use Throwable;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Traits\ApiResponseTrait;
+use App\Http\Requests\UserRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
-use Throwable;
+use App\Http\Requests\EditUserProfileRequest;
+use App\Http\Resources\UpdateUserProfileResource;
 
 class UserController extends Controller
 {
@@ -86,7 +87,9 @@ class UserController extends Controller
 
         if ($request->hasFile('image')) {
 
-            $image_path = $request->file('image')->store('users_folder', 'uploads');
+            $image_path = $request->file('image')->store('users_folder', 'public');
+            $image_path = Storage::url($image_path);
+            Artisan::call('storage:link');
 
         }
 
@@ -186,6 +189,7 @@ class UserController extends Controller
 
                  $newImage = $request->file('image')->store('users_folder', 'public');
                  $imageUrl = Storage::url($newImage);
+                 Artisan::call('storage:link');
              } else {
                  $imageUrl = $user->image;
              }
