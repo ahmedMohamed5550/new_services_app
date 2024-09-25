@@ -27,7 +27,6 @@ return new class extends Migration
             $table->string('website', 255)->nullable();
             $table->enum('checkByAdmin',['accepted','waiting','rejected'])->default('waiting');
             $table->enum('status',['available','busy'])->default('available');
-            $table->enum('type',['company','individual'])->default('individual');
             $table->string('imageSSN')->nullable();
             $table->string('livePhoto')->nullable();
             $table->string('nationalId')->unique()->nullable();

@@ -15,7 +15,6 @@ class EmployeeCompletedDataRequest extends FormRequest
     {
         return [
             'description' => 'required|string',
-            'type' => 'required|string',
             'imageSSN' => 'nullable|file|mimes:jpeg,png,jpg,gif',
             'livePhoto' => 'nullable|file|mimes:jpeg,png,jpg,gif',
             'nationalId' => 'nullable|regex:/^([0-9\s\-\+\(\)]*)$/|min:13',

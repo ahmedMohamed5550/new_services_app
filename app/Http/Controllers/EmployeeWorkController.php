@@ -6,6 +6,7 @@ use App\Http\Resources\EmployeeWorkResource;
 use App\Models\EmployeeWork;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Throwable;
@@ -169,14 +170,14 @@ class EmployeeWorkController extends Controller
 
              if (isset($images[$i]['image']) && $images[$i]['image']) {
                  $workImage = $images[$i]['image'];
-                 $workImagePath = $workImage->store('employee_works/images', 'public');
-                 $workImageUrl = Storage::url($workImagePath);
+                 $workImagePath = $workImage->move(public_path('employee_works/images'), $workImage->getClientOriginalName());
+                 $workImageUrl = asset('employee_works/images/' . $workImage->getClientOriginalName());
              }
 
              if (isset($videos[$i]['video']) && $videos[$i]['video']) {
                  $workVideo = $videos[$i]['video'];
-                 $workVideoPath = $workVideo->store('employee_works/videos', 'public'); // Store videos in a separate directory
-                 $workVideoUrl = Storage::url($workVideoPath);
+                 $workVideoPath = $workVideo->move(public_path('employee_works/videos'), $workVideo->getClientOriginalName());
+                 $workVideoUrl = asset('employee_works/videos/' . $workVideo->getClientOriginalName());
              }
 
              $data = EmployeeWork::create([
@@ -190,5 +191,6 @@ class EmployeeWorkController extends Controller
 
          return $this->apiResponse('Employee images and videos added successfully', 200, EmployeeWorkResource::collection($createdWorks));
      }
+
 
 }

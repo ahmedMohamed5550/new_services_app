@@ -58,7 +58,7 @@ class UserController extends Controller
      *                 @OA\Property(
      *                     property="userType",
      *                     type="string",
-     *                     description="userType choose between ['user','employee','admin']"
+     *                     description="userType choose between ['user','employee','company','admin']"
      *                 ),
     *     @OA\Property(
     *         property="comment",
@@ -79,28 +79,27 @@ class UserController extends Controller
      * )
      */
 
-    public function register(UserRequest $request)
-    {
-        $validatedData = $request->validated();
+     public function register(UserRequest $request)
+     {
+         $validatedData = $request->validated();
+         $image_path = null;
 
-        $image_path = null;
+         if ($request->hasFile('image')) {
+             // Move the uploaded image to the public directory
+             $image_path = $request->file('image')->move(public_path('users_folder'), $request->file('image')->getClientOriginalName());
+             // Generate a public URL for the image
+             $image_path = asset('users_folder/' . $request->file('image')->getClientOriginalName());
+         }
 
-        if ($request->hasFile('image')) {
+         $validatedData['image'] = $image_path;
 
-            $image_path = $request->file('image')->store('users_folder', 'public');
-            $image_path = Storage::url($image_path);
-            Artisan::call('storage:link');
+         $validatedData['password'] = Hash::make($validatedData['password']);
 
-        }
+         $user = User::create($validatedData);
 
-        $validatedData['image'] = $image_path;
+         return $this->apiResponse('User registered successfully', 200, new UserResource($user));
+     }
 
-        $validatedData['password'] = Hash::make($validatedData['password']);
-
-        $user = User::create($validatedData);
-
-        return $this->apiResponse('User registered successfully', 200, new UserResource($user));
-    }
 
     /**
      * @OA\Post(
@@ -174,38 +173,37 @@ class UserController extends Controller
      * )
      */
 
-    public function editUserProfile(EditUserProfileRequest $request, $id)
-    {
+     public function editUserProfile(EditUserProfileRequest $request, $id)
+     {
          try {
              $user = User::findOrFail($id);
+             $imageUrl = $user->image;
 
              if ($request->hasFile('image')) {
-                 $oldImageUrl = $user->image;
-                 $oldImagePath = str_replace('/storage', 'public', $oldImageUrl);
+                 if ($imageUrl) {
+                     $oldImagePath = public_path('users_folder/' . basename($imageUrl));
 
-                 if (Storage::exists($oldImagePath)) {
-                     Storage::delete($oldImagePath);
+                     if (file_exists($oldImagePath)) {
+                         unlink($oldImagePath);
+                     }
                  }
 
-                 $newImage = $request->file('image')->store('users_folder', 'public');
-                 $imageUrl = Storage::url($newImage);
-                 Artisan::call('storage:link');
-             } else {
-                 $imageUrl = $user->image;
+                 $newImage = $request->file('image')->move(public_path('users_folder'), $request->file('image')->getClientOriginalName());
+                 $imageUrl = asset('users_folder/' . $request->file('image')->getClientOriginalName());
              }
 
              $user->update([
-                'name' => $request->name,
-                'image' => $imageUrl,
+                 'name' => $request->name,
+                 'image' => $imageUrl,
              ]);
 
-             return $this->apiResponse('Update User successfully', 200, new UpdateUserProfileResource($user));
-
+             return $this->apiResponse('User profile updated successfully', 200, new UpdateUserProfileResource($user));
 
          } catch (Throwable $e) {
-            return $this->apiResponse('something error', 500);
-        }
-    }
+             return $this->apiResponse('Something went wrong', 500);
+         }
+     }
+
 
 
     /**

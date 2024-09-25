@@ -20,6 +20,7 @@ use App\Http\Requests\UpdateEmployeeProfileRequest;
 use App\Http\Resources\ShowEmployeeByLocationResource;
 use App\Http\Resources\ShowEmployeeBySectionAndServiceResource;
 use App\Models\User;
+use Illuminate\Support\Facades\Artisan;
 
 class EmployeeController extends Controller
 {
@@ -36,11 +37,6 @@ class EmployeeController extends Controller
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
-     *                 @OA\Property(
-     *                     property="type",
-     *                     type="string",
-     *                     description="choose between ['company','individual']"
-     *                 ),
      *                 @OA\Property(
      *                     property="description",
      *                     type="string",
@@ -190,39 +186,33 @@ class EmployeeController extends Controller
      */
     public function employeeCompleteData(EmployeeCompletedDataRequest $request)
     {
-        try{
+        try {
             $validatedData = $request->validated();
 
-            // Check if the request has an imageSSN file
             if ($request->hasFile('imageSSN')) {
-                $newImageSsn = $request->file('imageSSN')->store('employees_ssn', 'public');
-                $imageSsnUrl = Storage::url($newImageSsn);
-                // Add the imageSSN URL to the validated data
+                $newImageSsn = $request->file('imageSSN')->move(public_path('employees_ssn'), $request->file('imageSSN')->getClientOriginalName());
+                $imageSsnUrl = asset('employees_ssn/' . $request->file('imageSSN')->getClientOriginalName());
                 $validatedData['imageSSN'] = $imageSsnUrl;
             }
 
-            // Check if the request has a livePhoto file
             if ($request->hasFile('livePhoto')) {
-                $newImageLive = $request->file('livePhoto')->store('employees_live_photo', 'public');
-                $imageLiveUrl = Storage::url($newImageLive);
-                // Add the live photo URL to the validated data
+                $newImageLive = $request->file('livePhoto')->move(public_path('employees_live_photo'), $request->file('livePhoto')->getClientOriginalName());
+                $imageLiveUrl = asset('employees_live_photo/' . $request->file('livePhoto')->getClientOriginalName());
                 $validatedData['livePhoto'] = $imageLiveUrl;
             }
-
 
             $employee = Employee::create($validatedData);
             $location = Location::create($validatedData);
 
-            $employee = $employee->load('user','user.locations','section','service');
+            // Load related data
+            $employee = $employee->load('user', 'user.locations', 'section', 'service');
 
-            return $this->apiResponse('Details added to profile successfully',200,new EmployeeResource($employee));
+            return $this->apiResponse('Details added to profile successfully', 200, new EmployeeResource($employee));
+        } catch (Throwable $e) {
+            return $this->apiResponse('Something went wrong', 500, $e->getMessage());
         }
-
-        catch (Throwable $e) {
-            return $this->apiResponse('something error', 500, $e->getMessage());
-        }
-
     }
+
 
 
 
@@ -267,8 +257,10 @@ class EmployeeController extends Controller
     public function employeeProfile($id)
     {
         try{
-        // find user where type employee
-        $user = User::where('id',$id)->where('userType','employee')->first();
+        // find user where type employee and company
+        $user = User::where('id', $id)
+        ->whereIn('userType', ['employee', 'company'])
+        ->first();
 
         // get all employee data
         $employee = Employee::with(['user','service', 'section','user.locations','feedbacks' , 'likes','works'])->where('user_id',$user->id)->first();
@@ -398,7 +390,7 @@ class EmployeeController extends Controller
         try{
             $locations = Location::whereHas('user', function($q) use ($city) {
                 $q->where('city', $city)
-                  ->where('userType', 'employee');
+                  ->whereIn('userType', ['employee', 'company']);
             })->with(['user.employee.service', 'user.employee.section'])->get();
 
             // Transform the data using the ShowEmployeeByLocationResource

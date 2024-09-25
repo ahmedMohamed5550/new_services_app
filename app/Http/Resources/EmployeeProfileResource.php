@@ -15,10 +15,10 @@ class EmployeeProfileResource extends JsonResource
                 'name' => $this->user->name,
                 'image' => $this->user->image,
                 'phone' => $this->user->phone,
+                'userType' => $this->user->userType,
             ],
             "employee_data" => [
                 'id' => $this->id,
-                'type' => $this->type,
                 'imageSSN' => $this->imageSSN,
                 'livePhoto' => $this->livePhoto,
                 'nationalId' => $this->nationalId,

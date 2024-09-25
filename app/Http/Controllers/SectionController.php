@@ -138,24 +138,24 @@ class SectionController extends Controller
      */
 
 
-    public function store(SectionRequest $request)
-    {
-        $validatedData = $request->validated();
+     public function store(SectionRequest $request)
+     {
+         $validatedData = $request->validated();
 
-        $image_path = null;
+         $image_path = null;
 
-        if($request->hasFile('image'))
-        {
-            $image_path = $request->file('image')->store('sections_image' , 'public');
-            $image_path = Storage::url($image_path);
-            Artisan::call('storage:link');
-        }
+         if ($request->hasFile('image')) {
+             $image_path = $request->file('image')->move(public_path('sections_image'), $request->file('image')->getClientOriginalName());
+             $image_path = asset('sections_image/' . $request->file('image')->getClientOriginalName());
+         }
 
-        $validatedData['image'] = $image_path;
+         $validatedData['image'] = $image_path;
 
-        $section = Section::create($validatedData);
-        return $this->apiResponse('section created successfully' , 200 , new SectionResource($section));
-    }
+         $section = Section::create($validatedData);
+
+         return $this->apiResponse('section created successfully', 200, new SectionResource($section));
+     }
+
 
 
      /**
@@ -208,49 +208,42 @@ class SectionController extends Controller
      * )
      */
 
-    //update service
-    public function update(SectionRequest $request , $id)
+    public function update(SectionRequest $request, $id)
     {
         $section = Section::find($id);
 
-        if(!$section)
-        {
-            return $this->failed('not found' , 404);
+        if (!$section) {
+            return $this->failed('Section not found', 404);
         }
-
-
 
         $validatedData = $request->validated();
-
         $new_image = null;
 
-        if($request->hasFile('image'))
-        {
+        if ($request->hasFile('image')) {
+            // Delete the old image if it exists
+            if ($section->image) {
+                $old_image_path = public_path('sections_image/' . basename($section->image));
 
-            $old_image = $section->image;
-            $old_image = str_replace('/storage', 'public', $old_image);
+                if (file_exists($old_image_path)) {
+                    unlink($old_image_path);
+                }
+            }
 
-        if(Storage::exists($old_image))
-        {
-            Storage::delete($old_image);
+            // Save the new image to the public directory
+            $new_image = $request->file('image')->move(public_path('sections_image'), $request->file('image')->getClientOriginalName());
+            $new_image = asset('sections_image/' . $request->file('image')->getClientOriginalName());
         }
 
-            $new_image = $request->file('image')->store('sections_image' , 'public');
-            $new_image = Storage::url($new_image);
-            Artisan::call('storage:link');
-        }
-        if($new_image != null)
-        {
+        // If a new image was uploaded, update the image path
+        if ($new_image) {
             $validatedData['image'] = $new_image;
         }
 
         $section->update($validatedData);
 
-
-
-        return $this->apiResponse('section updated Successfully' , 200 , new SectionResource($section));
-
+        return $this->apiResponse('Section updated successfully', 200, new SectionResource($section));
     }
+
 
 
 
@@ -286,26 +279,25 @@ class SectionController extends Controller
     {
         $section = Section::find($id);
 
-        if(!$section)
-        {
-            return $this->failed('not found' , 404);
+        if (!$section) {
+            return $this->failed('Section not found', 404);
         }
 
         $image = $section->image;
 
-
         $section->delete();
 
-        if($image != null)
-        {
-            $image = str_replace('/storage', 'public', $image);
-            Storage::delete($image);
+        if ($image) {
+            $image_path = public_path('sections_image/' . basename($image));
+
+            if (file_exists($image_path)) {
+                unlink($image_path);
+            }
         }
 
-        return $this->apiResponse('section deleted successfully' , 200 , $section);
-
-
+        return $this->apiResponse('Section deleted successfully', 200, null);
     }
+
 
 
 

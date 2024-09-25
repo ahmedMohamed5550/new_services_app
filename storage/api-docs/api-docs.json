@@ -278,10 +278,6 @@
                         "multipart/form-data": {
                             "schema": {
                                 "properties": {
-                                    "type": {
-                                        "description": "choose between ['company','individual']",
-                                        "type": "string"
-                                    },
                                     "description": {
                                         "description": "Description of the employee",
                                         "type": "string"
@@ -2092,7 +2088,7 @@
                                         "format": "binary"
                                     },
                                     "userType": {
-                                        "description": "userType choose between ['user','employee','admin']",
+                                        "description": "userType choose between ['user','employee','company','admin']",
                                         "type": "string"
                                     },
                                     "comment": {

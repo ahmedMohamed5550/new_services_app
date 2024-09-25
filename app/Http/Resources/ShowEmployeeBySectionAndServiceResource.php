@@ -20,10 +20,10 @@ class ShowEmployeeBySectionAndServiceResource extends JsonResource
                 'name' => $this->user->name,
                 'image' => $this->user->image,
                 'phone' => $this->user->phone,
+                'userType' => $this->user->userType,
             ],
             'employee' => [
                 'id' => $this->id,
-                'type' => $this->type,
                 'description' => $this->description,
                 'total_rates' => $this->feedbacks->count(),
                 'average_rating' => round($this->feedbacks->avg('rating'), 2),

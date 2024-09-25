@@ -11,7 +11,6 @@ class Employee extends Model
     use HasFactory,Notifiable;
 
     protected $fillable=[
-        'type',
         'imageSSN',
         'livePhoto',
         'nationalId',

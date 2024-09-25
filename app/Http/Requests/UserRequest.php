@@ -28,7 +28,7 @@ class UserRequest extends FormRequest
             'email' => 'required|string|email|unique:users|max:255',
             'password' => 'required|string|min:8',
             'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|unique:users',
-            'userType' => 'required|in:user,admin,employee',
+            'userType' => 'required|in:user,admin,employee,company',
             'image' => 'sometimes|file|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }

@@ -198,21 +198,20 @@ class ServiceController extends Controller
     public function store(ServiceRequest $request)
     {
         $validatedData = $request->validated();
-
         $image_path = null;
 
-        if($request->hasFile('image'))
-        {
-            $image_path = $request->file('image')->store('services_image' , 'public');
-            $image_path = Storage::url($image_path);
-            Artisan::call('storage:link');
+        if ($request->hasFile('image')) {
+            $image_path = $request->file('image')->move(public_path('services_image'), $request->file('image')->getClientOriginalName());
+            $image_path = asset('services_image/' . $request->file('image')->getClientOriginalName());
         }
 
         $validatedData['image'] = $image_path;
 
         $service = Service::create($validatedData);
-        return $this->apiResponse('service created successfully' , 200 , new ServiceResource($service));
+
+        return $this->apiResponse('Service created successfully', 200, new ServiceResource($service));
     }
+
 
     /**
      * @OA\Post(
@@ -269,50 +268,42 @@ class ServiceController extends Controller
      * )
      */
 
-    //update service
-    public function update(ServiceRequest $request , $id)
+    public function update(ServiceRequest $request, $id)
     {
         $service = Service::find($id);
 
-        if(!$service)
-        {
-            return $this->failed('not found' , 404);
+        if (!$service) {
+            return $this->failed('Service not found', 404);
         }
-
-
 
         $validatedData = $request->validated();
-
         $new_image = null;
 
-        if($request->hasFile('image'))
-        {
+        if ($request->hasFile('image')) {
+            // Delete the old image if it exists
+            if ($service->image) {
+                $old_image_path = public_path('services_image/' . basename($service->image));
 
-            $old_image = $service->image;
-            $old_image = str_replace('/storage', 'public', $old_image);
+                if (file_exists($old_image_path)) {
+                    unlink($old_image_path);
+                }
+            }
 
-        if(Storage::exists($old_image))
-        {
-            Storage::delete($old_image);
+            // Move the new image to the public directory
+            $new_image = $request->file('image')->move(public_path('services_image'), $request->file('image')->getClientOriginalName());
+            // Generate a public URL for the new image
+            $new_image = asset('services_image/' . $request->file('image')->getClientOriginalName());
         }
 
-
-            $new_image = $request->file('image')->store('services_image' , 'public');
-            $new_image = Storage::url($new_image);
-            Artisan::call('storage:link');
-        }
-        if($new_image != null)
-        {
+        if ($new_image) {
             $validatedData['image'] = $new_image;
         }
 
         $service->update($validatedData);
 
-
-
-        return $this->apiResponse('service updated Successfully' , 200 , new ServiceResource($service));
-
+        return $this->apiResponse('Service updated successfully', 200, new ServiceResource($service));
     }
+
 
 
 
@@ -343,30 +334,28 @@ class ServiceController extends Controller
     * )
     */
 
-    //delete service
     public function delete($id)
     {
         $service = Service::find($id);
 
-        if(!$service)
-        {
-            return $this->failed('not found' , 404);
+        if (!$service) {
+            return $this->failed('Service not found', 404);
         }
 
         $image = $service->image;
 
-
         $service->delete();
 
-        if($image != null)
-        {
-            $image = str_replace('/storage' , 'public' , $image);
-            Storage::delete($image);
+        if ($image) {
+            $image_path = public_path('services_image/' . basename($image));
+
+            if (file_exists($image_path)) {
+                unlink($image_path);
+            }
         }
 
-        return $this->apiResponse('service deleted successfully' , 200 , $service);
-
-
+        return $this->apiResponse('Service deleted successfully', 200, null);
     }
+
 
 }
