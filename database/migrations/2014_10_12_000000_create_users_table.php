@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('phone')->unique();
             $table->string('image')->nullable();
-            $table->enum('userType',['user','employee','compnay','admin'])->default('user');
+            $table->enum('userType',['user','employee','company','admin'])->default('user');
         });
     }
 
