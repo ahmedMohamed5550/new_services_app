@@ -25,6 +25,7 @@ class ShowEmployeeByLocationResource extends JsonResource
                 'name' => $this->user->name ?? null,
                 'phone' => $this->user->phone ?? null,
                 'userType' => $this->user->userType ?? null,
+                'image' => $this->user->image ?? null,
             ],
             'employee' => $this->user->employee ? [
                 'id' => $this->user->employee->id ?? null,
