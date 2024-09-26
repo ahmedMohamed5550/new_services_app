@@ -30,8 +30,8 @@ class ShowEmployeeByLocationResource extends JsonResource
             'employee' => $this->user->employee ? [
                 'id' => $this->user->employee->id ?? null,
                 'whatsapp_number' => $this->user->employee->whatsapp_number ?? null,
-                'total_rates' => $this->feedbacks ? $this->feedbacks->count() : 0,
-                'average_rating' => $this->feedbacks ? round($this->feedbacks->avg('rating') ?? 0, 2) : 0,
+                'total_rates' => $this->user->employee->feedbacks ? $this->user->employee->feedbacks->count() : 0,
+                'average_rating' => $this->user->employee->feedbacks ? round($this->user->employee->feedbacks->avg('rating') ?? 0, 2) : 0,
                 'likes' => $this->user->employee->likes->count(),
             ] : null,
             'service' => $this->user->employee->service ? [

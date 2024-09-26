@@ -385,13 +385,13 @@ class EmployeeController extends Controller
      * )
      */
 
-     public function showAllEmployeeByLocation($city)
-     {
+    public function showAllEmployeeByLocation($city)
+    {
         try{
             $locations = Location::whereHas('user', function($q) use ($city) {
                 $q->where('city', $city)
                   ->whereIn('userType', ['employee', 'company']);
-            })->with(['user.employee.service', 'user.employee.section'])->get();
+            })->with(['user.employee.service', 'user.employee.section','user.employee.likes','user.employee.feedbacks'])->get();
 
             // Transform the data using the ShowEmployeeByLocationResource
             $data = ShowEmployeeByLocationResource::collection($locations);
