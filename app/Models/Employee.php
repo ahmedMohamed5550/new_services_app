@@ -13,6 +13,7 @@ class Employee extends Model
     protected $fillable=[
         'name',
         'company_image',
+        'company_name',
         'instagram_link',
         'linked_in_link',
         'imageSSN',

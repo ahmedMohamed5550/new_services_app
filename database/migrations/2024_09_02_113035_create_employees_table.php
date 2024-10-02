@@ -32,6 +32,7 @@ return new class extends Migration
             $table->enum('status',['available','busy'])->default('available');
             $table->string('imageSSN')->nullable();
             $table->string('company_image')->nullable();
+            $table->string('company_name')->nullable();
             $table->string('livePhoto')->nullable();
             $table->string('nationalId')->unique()->nullable();
         });

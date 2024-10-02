@@ -46,7 +46,12 @@ class EmployeeController extends Controller
      *                 @OA\Property(
      *                     property="name",
      *                     type="string",
-     *                     description="Nmae of the employee"
+     *                     description="Name of the employee"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="company_name",
+     *                     type="string",
+     *                     description="company name"
      *                 ),
      *                 @OA\Property(
      *                     property="company_image",

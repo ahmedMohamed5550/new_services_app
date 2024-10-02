@@ -283,7 +283,11 @@
                                         "type": "string"
                                     },
                                     "name": {
-                                        "description": "Nmae of the employee",
+                                        "description": "Name of the employee",
+                                        "type": "string"
+                                    },
+                                    "company_name": {
+                                        "description": "company name",
                                         "type": "string"
                                     },
                                     "company_image": {

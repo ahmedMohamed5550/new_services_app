@@ -15,7 +15,8 @@ class EmployeeCompletedDataRequest extends FormRequest
     {
         return [
             'name'=>'nullable|string',
-            'image_company'=>'nullable|file|mimes:jpeg,png,jpg,gif',
+            'company_image'=>'nullable|file|mimes:jpeg,png,jpg,gif',
+            'company_name' => 'nullable',
             'instagram_link'=>'nullable',
             'linked_in_link'=>'nullable',
             'description' => 'required|string',
