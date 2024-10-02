@@ -14,6 +14,10 @@ class EmployeeCompletedDataRequest extends FormRequest
     public function rules()
     {
         return [
+            'name'=>'nullable|string',
+            'image_company'=>'nullable|file|mimes:jpeg,png,jpg,gif',
+            'instagram_link'=>'nullable',
+            'linked_in_link'=>'nullable',
             'description' => 'required|string',
             'imageSSN' => 'nullable|file|mimes:jpeg,png,jpg,gif',
             'livePhoto' => 'nullable|file|mimes:jpeg,png,jpg,gif',

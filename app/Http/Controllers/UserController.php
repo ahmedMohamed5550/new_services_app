@@ -206,20 +206,54 @@ class UserController extends Controller
 
 
 
+
     /**
      * @OA\Get(
-     * path="/api/user",
-     * summary="Get logged-in user details",
-     * tags={"userAuth"},
-     * security={{"bearerAuth":{}}},
-     * @OA\Response(response="200", description="Success"),
-     * security={{"bearerAuth":{}}}
+     *     path="/api/user/{user_id}",
+     *     summary="Show User profile",
+     *     description="Show User profile",
+     *     tags={"userAuth"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="user_id",
+     *         in="path",
+     *         description="ID of the user",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Show User profile successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean"),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean"),
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     )
      * )
      */
-    public function getUserDetails(Request $request)
+    public function userProfile($user_id)
     {
-        $user = $request->user();
-        return response()->json(['user' => $user], 200);
+        $user = User::findOrFail($user_id);
+        if(!$user)
+        {
+            return $this->apiResponse('User Not found',404);
+        }
+
+        return $this->apiResponse('show user profile' , 200 , new UserResource($user));
+
     }
 
 

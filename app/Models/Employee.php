@@ -11,6 +11,10 @@ class Employee extends Model
     use HasFactory,Notifiable;
 
     protected $fillable=[
+        'name',
+        'company_image',
+        'instagram_link',
+        'linked_in_link',
         'imageSSN',
         'livePhoto',
         'nationalId',

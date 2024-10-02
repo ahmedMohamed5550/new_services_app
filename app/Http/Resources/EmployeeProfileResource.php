@@ -7,18 +7,29 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class EmployeeProfileResource extends JsonResource
 {
+    protected $status;
+
+    public function __construct($resource, $status)
+    {
+        parent::__construct($resource);
+        $this->status = $status;
+    }
+
     public function toArray($request)
     {
         return [
             "user" => [
                 'id' => $this->user->id,
                 'name' => $this->user->name,
+                'email'=>$this->user->email,
                 'image' => $this->user->image,
                 'phone' => $this->user->phone,
                 'userType' => $this->user->userType,
             ],
             "employee_data" => [
                 'id' => $this->id,
+                'name'=>$this->name,
+                'company_image'=>$this->company_image,
                 'imageSSN' => $this->imageSSN,
                 'livePhoto' => $this->livePhoto,
                 'nationalId' => $this->nationalId,
@@ -29,10 +40,13 @@ class EmployeeProfileResource extends JsonResource
                 'fax_number' => $this->fax_number,
                 'whatsapp_number' => $this->whatsapp_number,
                 'facebook_link' => $this->facebook_link,
+                'instagram_link'=>$this->instagram_link,
+                'linked_in_link'=>$this->linked_in_link,
                 'website' => $this->website,
                 'total_rates' => $this->feedbacks->count(),
                 'average_rating' => round($this->feedbacks->avg('rating'), 2),
                 'likes' => $this->likes->count(),
+                'status' => $this->status,
             ],
             'service' => [
                 'id' => $this->service->id,
@@ -63,6 +77,8 @@ class EmployeeProfileResource extends JsonResource
                 return [
                     'id' => $feedback->id,
                     'rating' => $feedback->rating,
+                    'name'=>$feedback->user->name,
+                    'image'=>$feedback->user->image,
                     'comment' => $feedback->comment,
                     'created_at' => $feedback->created_at->toDateTimeString(),
                     'updated_at' => $feedback->created_at->toDateTimeString(),

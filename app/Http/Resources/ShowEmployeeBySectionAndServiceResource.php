@@ -39,6 +39,12 @@ class ShowEmployeeBySectionAndServiceResource extends JsonResource
                 'name' => $this->section->name,
                 'desc' => $this->section->desc,
             ],
+            'location' => $this->user->locations->first() ? [
+                    'id' => $this->user->locations->first()->id,
+                    'city' => $this->user->locations->first()->city,
+                    'bitTitle' => $this->user->locations->first()->bitTitle,
+                    'street' => $this->user->locations->first()->street,
+                ] : null,
         ];
     }
 

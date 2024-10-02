@@ -16,6 +16,7 @@ class FeedbackResource extends JsonResource
                 return [
                     'id' => $this->user->id,
                     'name' => $this->user->name,
+                    'image'=>$this->image,
                 ];
             }),
             'employee' => $this->whenLoaded('employee', function() {

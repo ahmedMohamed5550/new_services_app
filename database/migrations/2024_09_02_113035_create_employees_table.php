@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('name')->nullable();
             $table->foreignId('section_id')->constrained('sections')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('service_id')->constrained('services')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
@@ -24,10 +25,13 @@ return new class extends Migration
             $table->string('fax_number', 20)->nullable();
             $table->string('whatsapp_number', 20)->nullable();
             $table->string('facebook_link', 255)->nullable();
+            $table->string('linked_in_link', 255)->nullable();
+            $table->string('instagram_link', 255)->nullable();
             $table->string('website', 255)->nullable();
             $table->enum('checkByAdmin',['accepted','waiting','rejected'])->default('waiting');
             $table->enum('status',['available','busy'])->default('available');
             $table->string('imageSSN')->nullable();
+            $table->string('company_image')->nullable();
             $table->string('livePhoto')->nullable();
             $table->string('nationalId')->unique()->nullable();
         });

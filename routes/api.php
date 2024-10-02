@@ -29,7 +29,7 @@ Route::post('/login', [LoginController::class,'login']);
 
 Route::controller(UserController::class)->group(function(){
     Route::Post('/user/editUserProfile/{id}','editUserProfile');
-    Route::get('/allUser','allUser');
+    Route::get('/user/{user_id}','userProfile');
     Route::get('/logout',"logout");
 });
 
@@ -69,8 +69,8 @@ Route::prefix('sections')->group(function(){
 Route::controller(EmployeeController::class)->prefix('employee')->group(function(){
     Route::post('/employeeCompleteData','employeeCompleteData');
     Route::Post("/updateEmployeeCompleteData/{id}",'updateEmployeeCompleteData');
-    Route::get('/section/{section_id}/service/{service_id}','showAllEmployeesBySectionIdAndServiceId');
-    Route::get("/employeeProfile/{id}",'employeeProfile');
+    Route::get('/section/{section_id}/service/{service_id}/{user_type}','showAllEmployeesBySectionIdAndServiceId');
+    Route::get("/employeeProfile/{employee_id}/{user_id}",'employeeProfile');
     Route::post("/showAllEmployeeBylocation/{city}",'showAllEmployeeBylocation');
     Route::post('/changeEmployeeStatus/{id}', 'changeEmployeeStatus');
     Route::post('/changeCheckByAdmin/{id}', 'changeCheckByAdmin');

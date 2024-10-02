@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Throwable;
+use App\Models\Like;
+use App\Models\User;
 use App\Models\Employee;
 use App\Models\Location;
 use App\Models\EmployeeWork;
@@ -10,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
 use App\Services\FeedbackService;
 use App\Http\Requests\EmployeeRequest;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\EmployeeResource;
 use App\Http\Resources\LocationResource;
@@ -19,8 +22,6 @@ use App\Http\Requests\EmployeeCompletedDataRequest;
 use App\Http\Requests\UpdateEmployeeProfileRequest;
 use App\Http\Resources\ShowEmployeeByLocationResource;
 use App\Http\Resources\ShowEmployeeBySectionAndServiceResource;
-use App\Models\User;
-use Illuminate\Support\Facades\Artisan;
 
 class EmployeeController extends Controller
 {
@@ -41,6 +42,17 @@ class EmployeeController extends Controller
      *                     property="description",
      *                     type="string",
      *                     description="Description of the employee"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="name",
+     *                     type="string",
+     *                     description="Nmae of the employee"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="company_image",
+     *                     type="string",
+     *                     format="binary",
+     *                     description="صوره الشركه"
      *                 ),
      *                 @OA\Property(
      *                     property="imageSSN",
@@ -88,6 +100,16 @@ class EmployeeController extends Controller
      *                     property="facebook_link",
      *                     type="string",
      *                     description="facebook_link"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="instagram_link",
+     *                     type="string",
+     *                     description="instagram_link"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="linked_in_link",
+     *                     type="string",
+     *                     description="linked_in_link"
      *                 ),
      *                 @OA\Property(
      *                     property="website",
@@ -200,6 +222,12 @@ class EmployeeController extends Controller
                 $imageLiveUrl = asset('employees_live_photo/' . $request->file('livePhoto')->getClientOriginalName());
                 $validatedData['livePhoto'] = $imageLiveUrl;
             }
+            if($request->hasFile('company_image'))
+            {
+                $image_company = $request->file('company_image')->move(public_path('company_image'), $request->file('company_image')->getClientOriginalName());
+                $imageLiveUrl = asset('company_image/' . $request->file('company_image')->getClientOriginalName());
+                $validatedData['company_image'] = $imageLiveUrl;
+            }
 
             $employee = Employee::create($validatedData);
             $location = Location::create($validatedData);
@@ -218,15 +246,24 @@ class EmployeeController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/employee/employeeProfile/{id}",
+     *     path="/api/employee/employeeProfile/{employee_id}/{user_id}",
      *     summary="Show employee profile",
      *     description="Show employee profile by user id where type employee",
      *     tags={"Employee"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
-     *         name="id",
+     *         name="employee_id",
      *         in="path",
      *         description="ID of the user where user type employee to show profile",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="user_id",
+     *         in="path",
+     *         description="ID of the user",
      *         required=true,
      *         @OA\Schema(
      *             type="integer"
@@ -254,18 +291,21 @@ class EmployeeController extends Controller
      * )
      */
 
-    public function employeeProfile($id)
+    public function employeeProfile($employee_id , $user_id)
     {
         try{
         // find user where type employee and company
-        $user = User::where('id', $id)
+        $user = User::where('id', $employee_id)
         ->whereIn('userType', ['employee', 'company'])
         ->first();
+
+        $like = Like::where('user_id' , $user_id)->where('employee_id' , $employee_id)->get();
+        $status = $like->isEmpty()? false : true;
 
         // get all employee data
         $employee = Employee::with(['user','service', 'section','user.locations','feedbacks' , 'likes','works'])->where('user_id',$user->id)->first();
 
-        return $this->apiResponse('Employee profile fetched successfully',200,new EmployeeProfileResource($employee));
+        return $this->apiResponse('Employee profile fetched successfully',200,new EmployeeProfileResource($employee , $status));
         }
         catch (Throwable $e) {
             return $this->apiResponse('something error',500);
@@ -278,7 +318,7 @@ class EmployeeController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/employee/section/{section_id}/service/{service_id}",
+     *     path="/api/employee/section/{section_id}/service/{service_id}/{user_type}",
      *     summary="Get all employees in section and service",
      *     tags={"Employee"},
      *     security={{"bearerAuth":{}}},
@@ -298,6 +338,15 @@ class EmployeeController extends Controller
      *         description="ID of the service",
      *         @OA\Schema(
      *             type="integer",
+     *         ),
+     *     ),
+     *     @OA\Parameter(
+     *         name="user_type",
+     *         in="path",
+     *         required=true,
+     *         description="Type Of User",
+     *         @OA\Schema(
+     *             type="string",
      *         ),
      *     ),
      *     @OA\Response(
@@ -321,18 +370,27 @@ class EmployeeController extends Controller
      * )
      */
 
-     public function showAllEmployeesBySectionIdAndServiceId($section_id, $service_id)
+     public function showAllEmployeesBySectionIdAndServiceId($section_id, $service_id , $user_type)
      {
         try{
-            $allEmployees = Employee::where('service_id', $service_id)
-            ->where('section_id', $section_id)
-            ->get();
+            $users = User::where('userType' , $user_type)->get();
+
+            $allEmployees = collect();
+
+            foreach($users as $user) {
+                $employees = Employee::with(['works' , 'user' , 'user.locations' , 'section' , 'service' , 'likes'])
+                                        ->where('service_id', $service_id)
+                                        ->where('section_id', $section_id)
+                                        ->where('user_id', $user->id)
+                                        ->get();
+
+                $allEmployees = $allEmployees->merge($employees);
+            }
 
             if ($allEmployees->isEmpty()) {
                 return $this->apiResponse('No employees found for this service', 404);
             }
 
-            $allEmployees->load('works', 'user', 'user.locations', 'section', 'service' , 'likes');
 
             return $this->apiResponse(
                 'Show all employees successfully',
