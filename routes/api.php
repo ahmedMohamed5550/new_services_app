@@ -13,6 +13,7 @@ use App\Http\Controllers\EmployeeWorkController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ImageCompanyController;
+use App\Http\Controllers\ProjectController;
 
 // Route::post('refresh', [AuthController::class,'refresh']);
 // Route::post('logout', [AuthController::class,'logout']);
@@ -90,6 +91,18 @@ Route::controller(AdminController::class)->prefix('Admin')->group(function(){
 
 Route::controller(EmployeeWorkController::class)->prefix('work')->group(function(){
     Route::post('/create', 'store');
+});
+
+Route::group(['prefix'=>'projects'],function($router){
+    Route::controller(ProjectController::class)->group(function(){
+        Route::get('/index', 'index');
+        Route::post('/create', 'store');
+        Route::get('/show/{id}', 'show');
+        Route::post('/update/{id}', 'update');
+        Route::post('/{projectId}/like/{userId}', 'like');
+        Route::get('/total-likes/{projectId}', 'getTotalLikes');
+        Route::delete('/destroy/{id}', 'destroy');
+    });
 });
 
 
