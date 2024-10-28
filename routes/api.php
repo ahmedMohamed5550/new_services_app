@@ -101,6 +101,11 @@ Route::group(['prefix'=>'projects'],function($router){
         Route::post('/{projectId}/like/{userId}', 'like');
         Route::get('/total-likes/{projectId}', 'getTotalLikes');
         Route::delete('/destroy/{id}', 'destroy');
+        Route::post('/{project_id}/comment/{user_id}', 'createComment');
+        Route::get('/total-comments/{projectId}', 'showComment');
+        Route::post('/comment/{comment_id}/update/{user_id}', 'updateComment');
+        Route::post('/comment/delete/{comment_id}/{user_id}', 'deleteComment');
+
     });
 });
 

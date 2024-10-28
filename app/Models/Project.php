@@ -37,4 +37,9 @@ class Project extends Model
     {
         return $this->hasMany(ProjectLike::class);
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

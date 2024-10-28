@@ -42,6 +42,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Location::class);
     }
 
+    public function comments()
+    {
+        return $this->hasMany(Commnet::class);
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
