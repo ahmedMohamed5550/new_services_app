@@ -10,6 +10,7 @@ use App\Http\Controllers\SectionController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeWorkController;
+use App\Http\Controllers\FavouriteController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ImageCompanyController;
@@ -53,10 +54,8 @@ Route::prefix('services')->group(function(){
 });
 
 Route::prefix('like')->group(function(){
-
-Route::post('/create' , [LikeController::class , 'store']);
-Route::get('/show/{id}' , [LikeController::class , 'showLikes']);
-
+    Route::post('/create' , [LikeController::class , 'store']);
+    Route::get('/show/{id}' , [LikeController::class , 'showLikes']);
 });
 
 Route::prefix('sections')->group(function(){
@@ -103,6 +102,11 @@ Route::group(['prefix'=>'projects'],function($router){
         Route::get('/total-likes/{projectId}', 'getTotalLikes');
         Route::delete('/destroy/{id}', 'destroy');
     });
+});
+
+Route::prefix('save')->group(function(){
+    Route::post('/create' , [FavouriteController::class , 'store']);
+    Route::get('/show/{id}' , [FavouriteController::class , 'show']);
 });
 
 

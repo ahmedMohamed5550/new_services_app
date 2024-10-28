@@ -805,6 +805,120 @@
                 ]
             }
         },
+        "/api/save/create": {
+            "post": {
+                "tags": [
+                    "save"
+                ],
+                "summary": "Add new save profile to employee Or remove save",
+                "operationId": "6a124e0a9a77ad9b665f96ebac11f13a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "description": "User ID where type user",
+                                        "type": "integer"
+                                    },
+                                    "employee_id": {
+                                        "description": "user ID where type employee",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "save added successfully"
+                    },
+                    "401": {
+                        "description": "Validation errors",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/save/show/{id}": {
+            "get": {
+                "tags": [
+                    "save"
+                ],
+                "summary": "Show saved for user",
+                "description": "Show saved for user by user id",
+                "operationId": "f28489c2c9883d506cb56d2964f99321",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user to show saved employee profile",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show employee profile saved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No saved found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/feedback/create": {
             "post": {
                 "tags": [
@@ -2994,6 +3108,10 @@
         {
             "name": "Works",
             "description": "Works"
+        },
+        {
+            "name": "save",
+            "description": "save"
         },
         {
             "name": "Feedback",

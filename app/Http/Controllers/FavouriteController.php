@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Like;
-use Illuminate\Http\Request;
+use App\Http\Requests\FavouriteRequest;
+use App\Http\Resources\FavouriteResource;
+use App\Http\Resources\ShowFavouriteResource;
+use App\Models\Favourite;
 use App\Traits\ApiResponseTrait;
-use App\Http\Requests\LikeRequest;
-use App\Http\Resources\LikeResource;
-use App\Http\Resources\ShowLikeResource;
+use Illuminate\Http\Request;
 
-class LikeController extends Controller
+class FavouriteController extends Controller
 {
     use ApiResponseTrait;
 
-    /**
+        /**
      * @OA\Post(
-     *     path="/api/like/create",
-     *     summary="Add new like to employee Or Delete Like",
-     *     tags={"like"},
+     *     path="/api/save/create",
+     *     summary="Add new save profile to employee Or remove save",
+     *     tags={"save"},
      *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
@@ -40,44 +40,44 @@ class LikeController extends Controller
      *             )
      *         )
      *     ),
-     *     @OA\Response(response="201", description="like added successfully"),
+     *     @OA\Response(response="201", description="save added successfully"),
      *     @OA\Response(response="401", description="Validation errors", @OA\JsonContent())
      * )
      */
-    public function store(LikeRequest $request)
+
+    public function store(FavouriteRequest $request)
     {
         $validatedData = $request->validated();
-        $user_id = $request->user_id;
-        $employee_id = $request->employee_id;
-        $like = Like::where('user_id' , $user_id)->where('employee_id' , $employee_id)->get();
 
-        if(count($like) > 0)
+        $favourite = Favourite::where('user_id' , $validatedData['user_id'])->where('employee_id' , $validatedData['employee_id'])->get();
+
+        if(count($favourite) > 0)
         {
-            Like::where('user_id' , $user_id)->where('employee_id' , $employee_id)->delete();
-            return $this->apiResponse('like deleted successfully', 200, $like);
+            Favourite::where('user_id' , $validatedData['user_id'])->where('employee_id' , $validatedData['employee_id'])->delete();
+            return $this->apiResponse('Saved profile deleted successfully', 200, $favourite);
         }
 
-        $like = Like::create($validatedData);
-        $like->load('user','employee');
+        $favourite = Favourite::create($validatedData);
+        $favourite->load('user','employee');
 
-        if ($like) {
-            return $this->apiResponse('Like Created successfully', 200, new LikeResource($like));
+        if ($favourite) {
+            return $this->apiResponse('Saved profile Created successfully', 200, new FavouriteResource($favourite));
         } else {
             return $this->apiResponse('Something went wrong', 500);
         }
     }
 
-     /**
+    /**
      * @OA\Get(
-     *     path="/api/like/show/{id}",
-     *     summary="Show Likes for employee",
-     *     description="Show like for employee by user id where type employee",
-     *     tags={"like"},
+     *     path="/api/save/show/{id}",
+     *     summary="Show saved for user",
+     *     description="Show saved for user by user id",
+     *     tags={"save"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="ID of the user where user type employee to show likes",
+     *         description="ID of the user to show saved employee profile",
      *         required=true,
      *         @OA\Schema(
      *             type="integer"
@@ -85,7 +85,7 @@ class LikeController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Show employee likes successfully",
+     *         description="Show employee profile saved successfully",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="boolean"),
@@ -95,7 +95,7 @@ class LikeController extends Controller
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="No Likes For Employee",
+     *         description="No saved found",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="boolean"),
@@ -105,17 +105,15 @@ class LikeController extends Controller
      * )
      */
 
-     public function showLikes($id)
-     {
-        $likes = Like::with('user')->where('employee_id' , $id)->get();
+    public function show($id){
+        $favourites = Favourite::where('user_id' , $id)->get();
 
-        if(count($likes) > 0)
-        {
-            return $this->apiResponse('All Likes' , 200 , ShowLikeResource::collection($likes));
+        $favourites->load('employee');
+
+        if (count($favourites) > 0) {
+            return $this->apiResponse('show all profiles to user saved successfully', 200, ShowFavouriteResource::collection($favourites));
         }
-        return $this->apiResponse('no likes for employee' , 404);
 
-     }
-
-
+        return $this->apiResponse('No saved found', 404);
+    }
 }

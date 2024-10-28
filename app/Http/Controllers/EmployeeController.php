@@ -313,12 +313,9 @@ class EmployeeController extends Controller
         return $this->apiResponse('Employee profile fetched successfully',200,new EmployeeProfileResource($employee , $status));
         }
         catch (Throwable $e) {
-            return $this->apiResponse('something error',500);
+            return $this->apiResponse('something error',500,$e->getMessage());
         }
     }
-
-
-
 
 
     /**
