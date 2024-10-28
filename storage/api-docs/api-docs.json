@@ -442,28 +442,19 @@
                 ]
             }
         },
-        "/api/employee/employeeProfile/{employee_id}/{user_id}": {
+        "/api/employee/employeeProfile/{employee_id}": {
             "get": {
                 "tags": [
                     "Employee"
                 ],
                 "summary": "Show employee profile",
                 "description": "Show employee profile by user id where type employee",
-                "operationId": "737d19b61feeff63171bffe84470856c",
+                "operationId": "2455ec1f7b5846c6d2d125f9fcfdedc7",
                 "parameters": [
                     {
                         "name": "employee_id",
                         "in": "path",
                         "description": "ID of the user where user type employee to show profile",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "description": "ID of the user",
                         "required": true,
                         "schema": {
                             "type": "integer"

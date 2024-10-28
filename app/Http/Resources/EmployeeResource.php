@@ -16,7 +16,6 @@ class EmployeeResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name'=>$this->name,
             'company_image'=>$this->company_image,
             'company_name'=>$this->company_name,
             'imageSSN' => $this->imageSSN,
@@ -31,6 +30,7 @@ class EmployeeResource extends JsonResource
             'facebook_link' => $this->facebook_link,
             'instagram_link'=>$this->instagram_link,
             'linked_in_link'=>$this->linked_in_link,
+            'tiktok_link'=>$this->tiktok_link,
             'website' => $this->website,
             'user' => $this->whenLoaded('user'),
             'service' => $this->whenLoaded('service'),

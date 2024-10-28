@@ -24,6 +24,8 @@ class ShowEmployeeBySectionAndServiceResource extends JsonResource
             ],
             'employee' => [
                 'id' => $this->id,
+                'company_image'=>$this->company_image,
+                'company_name'=>$this->company_name,
                 'description' => $this->description,
                 'total_rates' => $this->feedbacks->count(),
                 'average_rating' => round($this->feedbacks->avg('rating'), 2),

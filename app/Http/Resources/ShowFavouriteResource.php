@@ -21,4 +21,5 @@ class ShowFavouriteResource extends JsonResource
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];
     }
+
 }

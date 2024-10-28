@@ -70,7 +70,7 @@ Route::controller(EmployeeController::class)->prefix('employee')->group(function
     Route::post('/employeeCompleteData','employeeCompleteData');
     Route::Post("/updateEmployeeCompleteData/{id}",'updateEmployeeCompleteData');
     Route::get('/section/{section_id}/service/{service_id}/{user_type}','showAllEmployeesBySectionIdAndServiceId');
-    Route::get("/employeeProfile/{employee_id}/{user_id}",'employeeProfile');
+    Route::get("/employeeProfile/{user_id}",'employeeProfile');
     Route::post("/showAllEmployeeBylocation/{city}",'showAllEmployeeBylocation');
     Route::post('/changeEmployeeStatus/{id}', 'changeEmployeeStatus');
     Route::post('/changeCheckByAdmin/{id}', 'changeCheckByAdmin');

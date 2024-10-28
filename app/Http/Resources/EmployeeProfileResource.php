@@ -8,11 +8,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class EmployeeProfileResource extends JsonResource
 {
     protected $status;
+    protected $save;
 
-    public function __construct($resource, $status)
+    public function __construct($resource, $status,$save)
     {
         parent::__construct($resource);
         $this->status = $status;
+        $this->save = $save;
     }
 
     public function toArray($request)
@@ -28,7 +30,7 @@ class EmployeeProfileResource extends JsonResource
             ],
             "employee_data" => [
                 'id' => $this->id,
-                'name'=>$this->name,
+                'company_name'=>$this->company_name,
                 'company_image'=>$this->company_image,
                 'imageSSN' => $this->imageSSN,
                 'livePhoto' => $this->livePhoto,
@@ -42,11 +44,14 @@ class EmployeeProfileResource extends JsonResource
                 'facebook_link' => $this->facebook_link,
                 'instagram_link'=>$this->instagram_link,
                 'linked_in_link'=>$this->linked_in_link,
+                'tiktok_link'=>$this->tiktok_link,
                 'website' => $this->website,
                 'total_rates' => $this->feedbacks->count(),
                 'average_rating' => round($this->feedbacks->avg('rating'), 2),
                 'likes' => $this->likes->count(),
+                'total_saved' => $this->favourites->count(),
                 'status' => $this->status,
+                'saved' => $this->save,
             ],
             'service' => [
                 'id' => $this->service->id,

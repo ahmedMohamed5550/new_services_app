@@ -22,6 +22,7 @@ use App\Http\Requests\EmployeeCompletedDataRequest;
 use App\Http\Requests\UpdateEmployeeProfileRequest;
 use App\Http\Resources\ShowEmployeeByLocationResource;
 use App\Http\Resources\ShowEmployeeBySectionAndServiceResource;
+use App\Models\Favourite;
 
 class EmployeeController extends Controller
 {
@@ -42,11 +43,6 @@ class EmployeeController extends Controller
      *                     property="description",
      *                     type="string",
      *                     description="Description of the employee"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="name",
-     *                     type="string",
-     *                     description="Name of the employee"
      *                 ),
      *                 @OA\Property(
      *                     property="company_name",
@@ -115,6 +111,11 @@ class EmployeeController extends Controller
      *                     property="linked_in_link",
      *                     type="string",
      *                     description="linked_in_link"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="tiktok_link",
+     *                     type="string",
+     *                     description="tiktok link"
      *                 ),
      *                 @OA\Property(
      *                     property="website",
@@ -251,7 +252,7 @@ class EmployeeController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/employee/employeeProfile/{employee_id}/{user_id}",
+     *     path="/api/employee/employeeProfile/{employee_id}",
      *     summary="Show employee profile",
      *     description="Show employee profile by user id where type employee",
      *     tags={"Employee"},
@@ -259,16 +260,7 @@ class EmployeeController extends Controller
      *     @OA\Parameter(
      *         name="employee_id",
      *         in="path",
-     *         description="ID of the user where user type employee to show profile",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="user_id",
-     *         in="path",
-     *         description="ID of the user",
+     *         description="ID of the user where user type employee or company to show profile",
      *         required=true,
      *         @OA\Schema(
      *             type="integer"
@@ -296,21 +288,29 @@ class EmployeeController extends Controller
      * )
      */
 
-    public function employeeProfile($employee_id , $user_id)
+    public function employeeProfile($user_id)
     {
         try{
         // find user where type employee and company
-        $user = User::where('id', $employee_id)
+        $user = User::where('id', $user_id)
         ->whereIn('userType', ['employee', 'company'])
         ->first();
 
-        $like = Like::where('user_id' , $user_id)->where('employee_id' , $employee_id)->get();
-        $status = $like->isEmpty()? false : true;
+        if($user){
 
-        // get all employee data
-        $employee = Employee::with(['user','service', 'section','user.locations','feedbacks' , 'likes','works'])->where('user_id',$user->id)->first();
+            $employee = Employee::with(['user','service', 'section','user.locations','feedbacks' , 'likes','works','favourites'])->where('user_id',$user->id)->first();
 
-        return $this->apiResponse('Employee profile fetched successfully',200,new EmployeeProfileResource($employee , $status));
+            // get like or no
+            $like = Like::where('user_id' , $user_id)->where('employee_id' , $employee->id)->get();
+            $status = $like->isEmpty()? false : true;
+            // get favourite or no
+            $favourite = Favourite::where('user_id' , $user_id)->where('employee_id' , $employee->user_id)->get();
+            $save = $favourite->isEmpty()? false : true;
+
+            return $this->apiResponse('Employee profile fetched successfully',200,new EmployeeProfileResource($employee , $status,$save));
+        }
+        return $this->apiResponse('User where type employee or company not found',404);
+
         }
         catch (Throwable $e) {
             return $this->apiResponse('something error',500,$e->getMessage());

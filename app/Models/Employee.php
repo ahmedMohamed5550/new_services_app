@@ -11,7 +11,6 @@ class Employee extends Model
     use HasFactory,Notifiable;
 
     protected $fillable=[
-        'name',
         'company_image',
         'company_name',
         'instagram_link',
@@ -26,6 +25,7 @@ class Employee extends Model
         'fax_number',
         'whatsapp_number',
         'facebook_link',
+        'tiktok_link',
         'website',
         'checkByAdmin',
         'status',
@@ -63,6 +63,11 @@ class Employee extends Model
     public function likes()
     {
         return $this->hasMany(Like::class , 'employee_id','user_id');
+    }
+
+    public function favourites()
+    {
+        return $this->hasMany(Favourite::class , 'employee_id','user_id');
     }
 
 }
