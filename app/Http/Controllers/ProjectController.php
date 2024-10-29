@@ -563,26 +563,26 @@ class ProjectController extends Controller
         ]);
 
      }
-     
+
 
      /**
      * @OA\Post(
-     *     path="/api/projects/comment/{comment_id}/update/{user_id}",
+     *     path="/api/projects/update/{project_id}/comment/{comment_id}",
      *     summary="Update a comment",
      *     tags={"Project"},
      *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="project_id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the project",
+     *         @OA\Schema(type="integer")
+     *     ),
      *     @OA\Parameter(
      *         name="comment_id",
      *         in="path",
      *         required=true,
      *         description="ID of the comment",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Parameter(
-     *         name="user_id",
-     *         in="path",
-     *         required=true,
-     *         description="ID of the user",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\RequestBody(
@@ -624,46 +624,48 @@ class ProjectController extends Controller
      * )
      */
 
-     public function updateComment(CommentRequest $request , $comment_id , $user_id)
+     public function updateComment(CommentRequest $request,$project_id ,$comment_id)
      {
-        $comment = Comment::find($comment_id);
-        if(!$comment)
-        {
-            return $this->apiResponse('Not Found' , 404);
-        }
+         $project = Project::find($project_id);
+         if (!$project) {
+             return $this->apiResponse('Project Not Found', 404);
+         }
 
-       
+         $comment = Comment::find($comment_id);
+         if (!$comment) {
+             return $this->apiResponse('Comment Not Found', 404);
+         }
 
-        $userId = $comment->user->id;
-        if($user_id == $userId)
-        {
-            $udpated_comment = $comment->update($request->validated());
-            $new_comment = Comment::with('user')->find($comment_id);
-            return $this->apiResponse('comment updated successfully' , 200 ,new CommentResource($new_comment));
-        }
+         // Check if the comment is related to the specified project
+         if ($comment->project_id != $project_id) {
+            return $this->apiResponse('Comment not related to this project', 400);
+         }
 
-        return $this->apiResponse('Cant update this comment' , 400);
+         $updatedComment = $comment->update($request->validated());
+         $newComment = Comment::with('user')->find($comment_id);
 
+         return $this->apiResponse('Comment updated successfully', 200, new CommentResource($newComment));
      }
 
+
      /**
-     * @OA\Post(
-     *     path="/api/projects/comment/delete/{comment_id}/{user_id}",
+     * @OA\Delete(
+     *     path="/api/projects/delete/{project_id}/comment/{comment_id}",
      *     summary="Delete Comment",
      *     tags={"Project"},
      *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="project_id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the project",
+     *         @OA\Schema(type="integer")
+     *     ),
      *     @OA\Parameter(
      *         name="comment_id",
      *         in="path",
      *         required=true,
      *         description="ID of the comment",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Parameter(
-     *         name="user_id",
-     *         in="path",
-     *         required=true,
-     *         description="ID of the user",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
@@ -698,26 +700,27 @@ class ProjectController extends Controller
      */
 
 
-     public function deleteComment(Request $request , $comment_id , $user_id)
+     public function deleteComment($project_id ,$comment_id)
      {
-        $comment = Comment::find($comment_id);
-        if(!$comment)
-        {
-            return $this->apiResponse('Not Found' , 404);
-        }
+         $project = Project::find($project_id);
+         if (!$project) {
+             return $this->apiResponse('Project Not Found', 404);
+         }
 
-       
+         $comment = Comment::find($comment_id);
+         if (!$comment) {
+             return $this->apiResponse('Comment Not Found', 404);
+         }
 
-        $userId = $comment->user->id;
-        if($user_id == $userId)
-        {
-            $deleted_comment = Comment::with('user')->find($comment_id);
-            $comment->delete();
-            return $this->apiResponse('comment deleted successfully' , 200 ,new CommentResource($deleted_comment));
-        }
+         // Check if the comment is related to the specified project
+         if ($comment->project_id != $project_id) {
+             return $this->apiResponse('Comment not related to this project', 400);
+         }
 
-        return $this->apiResponse('Cant delete this comment' , 400);
+         $comment->delete();
 
+         return $this->apiResponse('Comment deleted successfully', 200);
      }
+
 
 }

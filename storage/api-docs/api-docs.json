@@ -282,10 +282,6 @@
                                         "description": "Description of the employee",
                                         "type": "string"
                                     },
-                                    "name": {
-                                        "description": "Name of the employee",
-                                        "type": "string"
-                                    },
                                     "company_name": {
                                         "description": "company name",
                                         "type": "string"
@@ -339,6 +335,10 @@
                                     },
                                     "linked_in_link": {
                                         "description": "linked_in_link",
+                                        "type": "string"
+                                    },
+                                    "tiktok_link": {
+                                        "description": "tiktok link",
                                         "type": "string"
                                     },
                                     "website": {
@@ -454,7 +454,7 @@
                     {
                         "name": "employee_id",
                         "in": "path",
-                        "description": "ID of the user where user type employee to show profile",
+                        "description": "ID of the user where user type employee or company to show profile",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -2391,27 +2391,27 @@
                 ]
             }
         },
-        "/api/projects/comment/{comment_id}/update/{user_id}": {
+        "/api/projects/update/{project_id}/comment/{comment_id}": {
             "post": {
                 "tags": [
                     "Project"
                 ],
                 "summary": "Update a comment",
-                "operationId": "dfdc163bd9c64e6281efd53246c029cc",
+                "operationId": "1eb9cf737d123f73cd7a1a1f21cc1796",
                 "parameters": [
                     {
-                        "name": "comment_id",
+                        "name": "project_id",
                         "in": "path",
-                        "description": "ID of the comment",
+                        "description": "ID of the project",
                         "required": true,
                         "schema": {
                             "type": "integer"
                         }
                     },
                     {
-                        "name": "user_id",
+                        "name": "comment_id",
                         "in": "path",
-                        "description": "ID of the user",
+                        "description": "ID of the comment",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -2487,27 +2487,27 @@
                 ]
             }
         },
-        "/api/projects/comment/delete/{comment_id}/{user_id}": {
-            "post": {
+        "/api/projects/delete/{project_id}/comment/{comment_id}": {
+            "delete": {
                 "tags": [
                     "Project"
                 ],
                 "summary": "Delete Comment",
-                "operationId": "8513758a6a3bf8161db090e1968eae94",
+                "operationId": "b59ab190c2c4e94a31e5b96726608585",
                 "parameters": [
                     {
-                        "name": "comment_id",
+                        "name": "project_id",
                         "in": "path",
-                        "description": "ID of the comment",
+                        "description": "ID of the project",
                         "required": true,
                         "schema": {
                             "type": "integer"
                         }
                     },
                     {
-                        "name": "user_id",
+                        "name": "comment_id",
                         "in": "path",
-                        "description": "ID of the user",
+                        "description": "ID of the comment",
                         "required": true,
                         "schema": {
                             "type": "integer"
