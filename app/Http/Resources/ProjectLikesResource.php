@@ -12,6 +12,7 @@ class ProjectLikesResource extends JsonResource
         return [
             'user_id' => $this->user_id,
             'user_name' => $this->user->name,
+            'user_image' => $this->user->image,
         ];
     }
 }

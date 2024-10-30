@@ -268,7 +268,7 @@ class ServiceController extends Controller
      * )
      */
 
-    public function update(ServiceRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $service = Service::find($id);
 
@@ -276,7 +276,7 @@ class ServiceController extends Controller
             return $this->failed('Service not found', 404);
         }
 
-        $validatedData = $request->validated();
+        $validatedData = $request->all();
         $new_image = null;
 
         if ($request->hasFile('image')) {

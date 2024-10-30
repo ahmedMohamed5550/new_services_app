@@ -18,7 +18,7 @@ class SectionController extends Controller
     /**
      * @OA\Get(
      *     path="/api/sections",
-     *     summary="Show all services",
+     *     summary="Show all sections",
      *     tags={"sections"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Response(
@@ -208,7 +208,7 @@ class SectionController extends Controller
      * )
      */
 
-    public function update(SectionRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $section = Section::find($id);
 
@@ -216,7 +216,7 @@ class SectionController extends Controller
             return $this->failed('Section not found', 404);
         }
 
-        $validatedData = $request->validated();
+        $validatedData = $request->all();
         $new_image = null;
 
         if ($request->hasFile('image')) {

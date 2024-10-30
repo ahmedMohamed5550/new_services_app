@@ -2591,7 +2591,7 @@
                 "tags": [
                     "sections"
                 ],
-                "summary": "Show all services",
+                "summary": "Show all sections",
                 "operationId": "ec6bc0921c4783e5344d7c888da6f7e8",
                 "responses": {
                     "200": {
